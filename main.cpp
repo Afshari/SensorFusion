@@ -1,29 +1,16 @@
 
-#if RUN_STATUS == RUN_APP || RUN_STATUS == RUN_DEBUG
 
-#include <QCoreApplication>
 
-#elif RUN_STATUS == RUN_TEST
+#if RUN_TYPE == RUN_APP
 
-#include "ekf_test.h"
-#include <gtest/gtest.h>
+#include "main/main_run.cpp"
 
-#endif
+#elif RUN_TYPE == RUN_DEBUG
 
-int main(int argc, char *argv[])
-{
+#include "main/main_debug.cpp"
 
-#if RUN_STATUS == RUN_APP || RUN_STATUS == RUN_DEBUG
+#elif RUN_TYPE == RUN_TEST
 
-    QCoreApplication a(argc, argv);
-
-    return a.exec();
-
-#elif RUN_STATUS == RUN_TEST
-
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+#include "main/main_test.cpp"
 
 #endif
-
-}
