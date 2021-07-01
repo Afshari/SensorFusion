@@ -21,7 +21,8 @@ public:
 
 
 private slots:
-    void testConstructor();
+    void testConstructor_1();
+    void testConstructor_2();
     void testResidual();
     void testHJacobian();
     void testHx();

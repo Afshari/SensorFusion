@@ -28,10 +28,14 @@ find_package(GTest CONFIG REQUIRED)
 add_executable(SensorFusion
 
     ekf_localization.cpp
+    run_localization.cpp
     inc/ekf_localization.h
+    inc/run_localization.h
 
     tests/qtest_ekf_localization.cpp
+    tests/qtest_run_localization.cpp
     tests/inc/qtest_ekf_localization.h
+    tests/inc/qtest_run_localization.h
 
     main.cpp
 )

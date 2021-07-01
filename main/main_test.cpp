@@ -5,6 +5,7 @@
 
 #include "tests/inc/ekf_test.h"
 #include "tests/inc/qtest_ekf_localization.h"
+#include "tests/inc/qtest_run_localization.h"
 
 int main(int argc, char *argv[]) {
 
@@ -14,6 +15,9 @@ int main(int argc, char *argv[]) {
 
     QTestEKFLocalization q_ekf_localization;
     QTest::qExec(&q_ekf_localization);
+
+    QTestRunLocalization q_run_localization;
+    QTest::qExec(&q_run_localization);
 
 
 }

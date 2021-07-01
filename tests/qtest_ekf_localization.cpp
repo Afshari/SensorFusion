@@ -5,7 +5,7 @@ QTestEKFLocalization::QTestEKFLocalization(QObject *parent) : QObject(parent) {
 }
 
 
-void QTestEKFLocalization::testConstructor() {
+void QTestEKFLocalization::testConstructor_1() {
 
     EKFLocalization ekf(0.1, 0.5, 0.1, 0.1);
 
@@ -16,6 +16,33 @@ void QTestEKFLocalization::testConstructor() {
     QVERIFY(ekf.Q->rows() == 3 && ekf.Q->cols() == 3);
     QVERIFY(ekf.y->rows() == 2 && ekf.y->cols() == 1);
 
+
+    QVERIFY( ekf.a == 0 );
+    QVERIFY( ekf.v == 0 );
+    QVERIFY( fabs( ekf.t - 0.1 ) < 1e-4 );
+    QVERIFY( fabs( ekf.w - 0.5 ) < 1e-4 );
+    QVERIFY( fabs( ekf.std_vel - 0.1 ) < 1e-4 );
+    QVERIFY( fabs( ekf.std_steer - (0.1 * M_PI / 180) ) < 1e-4 );
+}
+
+
+void QTestEKFLocalization::testConstructor_2() {
+
+    EKFLocalization ekf;
+
+    QVERIFY(ekf.x->rows() == 3 && ekf.x->cols() == 1);
+    QVERIFY(ekf.P->rows() == 3 && ekf.P->cols() == 3);
+    QVERIFY(ekf.F->rows() == 3 && ekf.F->cols() == 3);
+    QVERIFY(ekf.R->rows() == 2 && ekf.R->cols() == 2);
+    QVERIFY(ekf.Q->rows() == 3 && ekf.Q->cols() == 3);
+    QVERIFY(ekf.y->rows() == 2 && ekf.y->cols() == 1);
+
+    QVERIFY( ekf.a == 0 );
+    QVERIFY( ekf.v == 0 );
+    QVERIFY( fabs( ekf.t - 1 ) < 1e-4 );
+    QVERIFY( fabs( ekf.w - 0.5 ) < 1e-4 );
+    QVERIFY( fabs( ekf.std_vel - 0 ) < 1e-4 );
+    QVERIFY( fabs( ekf.std_steer - 0 ) < 1e-4 );
 }
 
 void QTestEKFLocalization::testResidual() {

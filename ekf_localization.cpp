@@ -1,11 +1,11 @@
 
 #include "inc/ekf_localization.h"
 
-EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float std_steer, QObject *parent) : QObject(parent) {
+EKFLocalization::EKFLocalization(QObject *parent) : QObject(parent) {
 
     this->dim_x = 3;
     this->dim_z = 2;
-    this->dim_u = 2;
+//    this->dim_u = 2;
 
     this->x = make_unique<VectorXd>( VectorXd::Zero(this->dim_x, 1) );                   // State
     this->P = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );     // Uncertainty Covariance
@@ -23,16 +23,51 @@ EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float
 
     this->_I = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );
 
-    this->dt = dt;
-    this->std_vel = std_vel;
-    this->std_steer = std_steer * M_PI / 180;
+//    this->dt = 0;
+    this->std_vel = 0;
+    this->std_steer = 0;
 
     this->a = 0;
     this->v = 0;
+    this->w = 0.5;
+    this->t = 1;
+}
+
+
+EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float std_steer, QObject *parent) :
+    EKFLocalization(parent) {
+
+//    this->dt = dt;
+    this->std_vel = std_vel;
+    this->std_steer = std_steer * M_PI / 180;
+
+//    this->a = 0;
+//    this->v = 0;
     this->w = wheelbase;
     this->t = dt;
-    this->theta = 0;
+//    this->theta = 0;
 }
+
+void EKFLocalization::setParams(float std_vel, float std_steer, float std_range,
+               float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle) {
+
+    this->std_vel = std_vel;
+    this->std_steer = std_steer * M_PI / 180;
+    setR(std_range, std_bearing);
+    this->x = make_unique<VectorXd>( Vector3d( { 0, 0, start_angle } ) );
+    MatrixXd P(3, 3);
+    P << prior_cov_pos, 0,             0,
+         0,             prior_cov_pos, 0,
+         0,             0,             prior_cov_angle;
+    this->P = make_unique<MatrixXd>( P );
+}
+
+
+void EKFLocalization::setLandmarks(unique_ptr<vector<Vector2d>> landmarks) {
+
+    this->landmarks = std::move( landmarks );
+}
+
 
 unique_ptr<VectorXd> EKFLocalization::residual(const unique_ptr<VectorXd> &a,
                                                const unique_ptr<VectorXd> &b) {
@@ -188,7 +223,6 @@ unique_ptr<MatrixXd> EKFLocalization::calcP(const unique_ptr<MatrixXd> &prior_P,
 
 #endif
 
-//#include "ekf_localization.moc"
 
 
 
