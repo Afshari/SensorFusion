@@ -17,7 +17,8 @@ using Eigen::Vector3d;
 using std::vector;
 using std::unique_ptr;
 using std::make_unique;
-
+using std::shared_ptr;
+using std::make_shared;
 
 class EKFLocalization : public QObject {
     Q_OBJECT
@@ -31,9 +32,14 @@ public:
     void update(const unique_ptr<VectorXd> &z, const unique_ptr<VectorXd> &landmark);
     void setParams(float std_vel, float std_steer, float std_range,
                    float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle);
-    void setLandmarks(unique_ptr<vector<Vector2d>> landmarks);
+    void setLandmarks(shared_ptr<vector<Vector2d>> landmarks);
     void setR(const float std_range, const float std_bearing);
 
+    shared_ptr<VectorXd> get_x();
+    shared_ptr<MatrixXd> get_P();
+    shared_ptr<vector<Vector2d>> getLandmarks();
+
+    void print_xP();
 
 private:
 
@@ -49,9 +55,8 @@ private:
     unique_ptr<MatrixXd> SI;
     unique_ptr<MatrixXd> _I;
 
-    unique_ptr<vector<Vector2d>> landmarks;
+    shared_ptr<vector<Vector2d>> landmarks;
 
-//    float dt;
     float std_vel;
     float std_steer;
 
@@ -59,13 +64,9 @@ private:
     float v;
     float w;
     float t;
-//    float theta;
 
     int dim_x;
     int dim_z;
-//    int dim_u;
-
-
 
 private:
     unique_ptr<VectorXd> residual(const unique_ptr<VectorXd> &a, const unique_ptr<VectorXd> &b);
@@ -78,6 +79,8 @@ private:
 
     friend class QTestEKFLocalization;
     friend class QTestRunLocalization;
+    friend class QTestInputParser;
+    friend class RunLocalization;
 
     unique_ptr<MatrixXd> calcF(float v, float a, float theta);
     unique_ptr<MatrixXd> calcV(float v, float a, float theta);

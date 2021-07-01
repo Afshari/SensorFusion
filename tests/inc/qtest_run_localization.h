@@ -1,5 +1,5 @@
-#ifndef QTESTRUNLOCALIZATION_H
-#define QTESTRUNLOCALIZATION_H
+#ifndef QTEST_RUN_LOCALIZATION_H
+#define QTEST_RUN_LOCALIZATION_H
 
 #include <QObject>
 #include <QtTest/QtTest>
@@ -8,6 +8,8 @@
 #include "inc/run_localization.h"
 
 using std::unique_ptr;
+using std::shared_ptr;
+using std::make_shared;
 using std::vector;
 using std::string;
 
@@ -19,16 +21,12 @@ public:
 
 
 private slots:
-    void testGetCode();
-    void testGetIndices();
-    void testGetControlInput();
-    void testGetParams();
-    void testGetLandmarks();
-    void testGetObservations();
+    void testRunStep_1();
+    void testRunStep_2();
 
 
 signals:
 
 };
 
-#endif // QTESTRUNLOCALIZATION_H
+#endif // QTEST_RUN_LOCALIZATION_H

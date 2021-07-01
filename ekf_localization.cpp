@@ -23,7 +23,6 @@ EKFLocalization::EKFLocalization(QObject *parent) : QObject(parent) {
 
     this->_I = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );
 
-//    this->dt = 0;
     this->std_vel = 0;
     this->std_steer = 0;
 
@@ -37,16 +36,36 @@ EKFLocalization::EKFLocalization(QObject *parent) : QObject(parent) {
 EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float std_steer, QObject *parent) :
     EKFLocalization(parent) {
 
-//    this->dt = dt;
     this->std_vel = std_vel;
     this->std_steer = std_steer * M_PI / 180;
 
-//    this->a = 0;
-//    this->v = 0;
     this->w = wheelbase;
     this->t = dt;
-//    this->theta = 0;
 }
+
+shared_ptr<VectorXd> EKFLocalization::get_x() {
+
+    return std::move( x );
+}
+
+
+shared_ptr<MatrixXd> EKFLocalization::get_P() {
+
+    return std::move( P );
+}
+
+void EKFLocalization::print_xP() {
+
+    std::cout << *x << std::endl;
+    std::cout << *P << std::endl;
+}
+
+
+shared_ptr<vector<Vector2d>> EKFLocalization::getLandmarks() {
+
+    return landmarks;
+}
+
 
 void EKFLocalization::setParams(float std_vel, float std_steer, float std_range,
                float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle) {
@@ -63,9 +82,9 @@ void EKFLocalization::setParams(float std_vel, float std_steer, float std_range,
 }
 
 
-void EKFLocalization::setLandmarks(unique_ptr<vector<Vector2d>> landmarks) {
+void EKFLocalization::setLandmarks(shared_ptr<vector<Vector2d>> landmarks) {
 
-    this->landmarks = std::move( landmarks );
+    this->landmarks = landmarks;
 }
 
 

@@ -4,115 +4,64 @@ RunLocalization::RunLocalization(QObject *parent) : QObject(parent) {
 
 }
 
-int RunLocalization::getCode(const char* data) {
 
-    string strData;
-    strData.assign( data );
-    string delimiter = ":";
+void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>& ekf,
+                           const shared_ptr<InputParser>& parser) {
 
-    size_t pos = strData.find(delimiter);
-    if(pos > strData.length())
-        return -1;
+    int code = parser->getCode(data);
+    unique_ptr<vector<int>> indices = parser->getIndices( data, ":" );
 
-    string token = strData.substr(0, pos);
-    return std::stoi(token);
-}
+    if(code == 100) {
 
+        int start_index = (*indices)[1];
+        int len = (*indices)[2] - (*indices)[1] - 1;
+        unique_ptr<map<string, float>> params = parser->getParams(data, start_index, len);
 
-unique_ptr<vector<int>> RunLocalization::getIndices(const string& data, const string& delimiter) {
+        ekf->setParams( (*params)["std_vel"],     (*params)["std_steer"],   (*params)["std_range"],
+                        (*params)["std_bearing"], (*params)["start_angle"], (*params)["prior_cov_pos"],
+                        (*params)["prior_cov_angle"] );
 
-    vector<int> indices;
+        start_index = (*indices)[3];
+        len = data.length() - (*indices)[3];
+        shared_ptr<vector<Vector2d>> landmarks = parser->getObservations(data, start_index, len);
+        ekf->setLandmarks( landmarks );
 
-    int pos = 0;
-    indices.push_back( pos );
-    while(true) {
-        pos = data.find(delimiter, pos);
-        if(pos == -1)
-            break;
-        pos += 1;
-        indices.push_back( pos );
     }
 
-    return make_unique<vector<int>>( indices );
-}
+    if(code == 100 || code == 101) {
 
+        int start_index = (*indices)[1];
+        int len = (*indices)[2] - (*indices)[1] - 1;
+        unique_ptr<VectorXd> u = parser->getControlInput(data, start_index, len);
 
-unique_ptr<map<string, float>> RunLocalization::getParams(const string& data, int start_index, int end_index) {
+        ekf->predict( u );
 
-    string token = data.substr(start_index, end_index);
+        start_index = (*indices)[2];
+        len = (*indices)[3] - (*indices)[2] - 1;
+        unique_ptr<vector<Vector2d>> observations = parser->getObservations(data, start_index, len);
 
-    auto indices = getIndices(token, ",");
+        for(auto i = 0U; i < ekf->getLandmarks()->size(); i++) {
 
-    float std_vel = std::stof( token.substr( (*indices)[2], (*indices)[3] - (*indices)[2] - 1 ) );
-    float std_steer = std::stof( token.substr( (*indices)[3], (*indices)[4] - (*indices)[3] - 1 ) );
-    float std_range = std::stof( token.substr( (*indices)[4], (*indices)[5] - (*indices)[4] - 1 ) );
-    float std_bearing = std::stof( token.substr( (*indices)[5], (*indices)[6] - (*indices)[5] - 1 ) );
-    float start_angle = std::stof( token.substr( (*indices)[6], (*indices)[7] - (*indices)[6] - 1 ) );
-    float prior_cov_pos = std::stof( token.substr( (*indices)[7], (*indices)[8] - (*indices)[7] - 1 ) );
-    float prior_cov_angle = std::stof( token.substr( (*indices)[8], (*indices)[9] - (*indices)[8] - 1 ) );
-
-    map<string, float> result = {
-        { "std_vel", std_vel },
-        { "std_steer", std_steer },
-        { "std_range", std_range },
-        { "std_bearing", std_bearing },
-        { "start_angle", start_angle },
-        { "prior_cov_pos", prior_cov_pos },
-        { "prior_cov_angle", prior_cov_angle }
-    };
-
-    return make_unique<map<string, float>>( result );
-}
-
-unique_ptr<map<string, float>> RunLocalization::getControlInput(const string& data, int start_index, int end_index) {
-
-    string token = data.substr(start_index, end_index);
-
-    auto indices = getIndices(token, ",");
-
-//    std::cout << token << std::endl;
-//    std::copy(indices->begin(), indices->end(), std::ostream_iterator<int>(std::cout, " "));
-//    std::cout << std::endl;
-
-    float r = std::stof( token.substr( (*indices)[0], (*indices)[1] - (*indices)[0] - 1 ) );
-    float theta = std::stof( token.substr( (*indices)[1], (*indices)[2] - (*indices)[1] - 1 ) );
-
-    map<string, float> result = {
-        { "r", r },
-        { "theta", theta },
-    };
-
-
-    return make_unique<map<string, float>>( result );
-}
-
-
-unique_ptr<vector<Vector2d>> RunLocalization::getObservations(const string& data, int start_index, int end_index) {
-
-    string token = data.substr(start_index, end_index);
-    auto indices = getIndices(token, ";");
-
-//    std::cout << token << std::endl;
-//    std::copy(indices->begin(), indices->end(), std::ostream_iterator<int>(std::cout, " "));
-//    std::cout << std::endl;
-
-    vector<Vector2d> observations;
-
-    string currObservation = "";
-    for(auto i = 0U; i < indices->size(); i++) {
-
-        if(i < indices->size() - 1) {
-            currObservation = token.substr( indices->at(i), indices->at(i + 1) - indices->at(i) - 1 );
-        } else {
-            currObservation = token.substr( indices->at(i), token.length() );
+            ekf->update( make_unique<VectorXd>( observations->at(i) ),
+                         make_unique<VectorXd>( ekf->getLandmarks()->at(i) ) );
         }
-        auto idx = getIndices(currObservation, ",");
-        float x = std::stof( currObservation.substr( (*idx)[0], (*idx)[1] - (*idx)[0] - 1 ) );
-        float y = std::stof( currObservation.substr( (*idx)[1], currObservation.length() - (*idx)[1] ) );
 
-        observations.push_back( Vector2d( x, y ) );
     }
 
-    return make_unique<vector<Vector2d>>( observations );
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

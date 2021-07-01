@@ -1,5 +1,5 @@
-#ifndef QTESTEKF_H
-#define QTESTEKF_H
+#ifndef QTEST_EKF_H
+#define QTEST_EKF_H
 
 #include <QObject>
 #include <QtTest/QtTest>
@@ -37,4 +37,4 @@ private slots:
 
 };
 
-#endif // QTESTEKF_H
+#endif // QTEST_EKF_H

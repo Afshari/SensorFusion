@@ -29,13 +29,20 @@ add_executable(SensorFusion
 
     ekf_localization.cpp
     run_localization.cpp
+    input_parser.cpp
+
     inc/ekf_localization.h
     inc/run_localization.h
+    inc/input_parser.h
+
 
     tests/qtest_ekf_localization.cpp
     tests/qtest_run_localization.cpp
+    tests/qtest_input_parser.cpp
+
     tests/inc/qtest_ekf_localization.h
     tests/inc/qtest_run_localization.h
+    tests/inc/qtest_input_parser.h
 
     main.cpp
 )

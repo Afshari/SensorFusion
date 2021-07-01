@@ -7,24 +7,23 @@
 #include <map>
 
 #include "inc/ekf_localization.h"
+#include "inc/input_parser.h"
 
 using std::string;
 using std::vector;
 using std::unique_ptr;
 using std::make_unique;
+using std::shared_ptr;
+using std::make_shared;
 using std::map;
 
-class RunLocalization : public QObject
-{
+class RunLocalization : public QObject {
     Q_OBJECT
 public:
     explicit RunLocalization(QObject *parent = nullptr);
 
-    int getCode(const char* data);
-    unique_ptr<vector<int>> getIndices(const string& data, const string& delimiter);
-    unique_ptr<map<string, float>> getParams(const string& data, int start_index, int end_index);
-    unique_ptr<vector<Vector2d>> getObservations(const string& data, int start_index, int end_index);
-    unique_ptr<map<string, float>> getControlInput(const string& ata, int start_index, int end_index);
+    void step(const string &data,
+              const shared_ptr<EKFLocalization>& ekf, const shared_ptr<InputParser>& parser);
 
 #if RUN_TYPE == RUN_TEST
 
