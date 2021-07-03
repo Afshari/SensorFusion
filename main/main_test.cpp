@@ -10,9 +10,6 @@
 
 int main(int argc, char *argv[]) {
 
-//    ::testing::InitGoogleTest(&argc, argv);
-//    return RUN_ALL_TESTS();
-
 
     QTestEKFLocalization q_ekf_localization;
     QTest::qExec(&q_ekf_localization);
@@ -23,5 +20,7 @@ int main(int argc, char *argv[]) {
     QTestInputParser q_input_parser;
     QTest::qExec(&q_input_parser);
 
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 
 }

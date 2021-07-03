@@ -28,23 +28,21 @@ public:
     virtual ~EKFLocalization() { };
 
 
-    void predict(const unique_ptr<VectorXd> &u);
-    void update(const unique_ptr<VectorXd> &z, const unique_ptr<VectorXd> &landmark);
-    void setParams(float std_vel, float std_steer, float std_range,
-                   float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle);
-    void setLandmarks(shared_ptr<vector<Vector2d>> landmarks);
-    void setR(const float std_range, const float std_bearing);
+    virtual void predict(const unique_ptr<VectorXd> &u);
+    virtual void update(const unique_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark);
+    virtual void setParams( float std_vel, float std_steer, float std_range,
+                            float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle);
+    virtual void setLandmarks(shared_ptr<vector<Vector2d>> landmarks);
+    virtual void setR(const float std_range, const float std_bearing);
 
     shared_ptr<VectorXd> get_x();
     shared_ptr<MatrixXd> get_P();
-    shared_ptr<vector<Vector2d>> getLandmarks();
-
-    void print_xP();
+    virtual shared_ptr<vector<Vector2d>> getLandmarks();
 
 private:
 
-    unique_ptr<VectorXd> x;
-    unique_ptr<MatrixXd> P;
+    shared_ptr<VectorXd> x;
+    shared_ptr<MatrixXd> P;
     unique_ptr<MatrixXd> F;
     unique_ptr<MatrixXd> R;
     unique_ptr<MatrixXd> Q;
@@ -70,9 +68,9 @@ private:
 
 private:
     unique_ptr<VectorXd> residual(const unique_ptr<VectorXd> &a, const unique_ptr<VectorXd> &b);
-    unique_ptr<MatrixXd> HJacobian(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &landmark);
-    unique_ptr<VectorXd> Hx(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &landmark);
-    unique_ptr<VectorXd> move(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &u);
+    unique_ptr<MatrixXd> HJacobian(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark);
+    unique_ptr<VectorXd> Hx(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark);
+    shared_ptr<VectorXd> move(const shared_ptr<VectorXd> &x, const unique_ptr<VectorXd> &u);
 
 
 #if RUN_TYPE == RUN_TEST

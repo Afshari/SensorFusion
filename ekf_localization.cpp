@@ -45,20 +45,15 @@ EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float
 
 shared_ptr<VectorXd> EKFLocalization::get_x() {
 
-    return std::move( x );
+    return this->x;
 }
 
 
 shared_ptr<MatrixXd> EKFLocalization::get_P() {
 
-    return std::move( P );
+    return this->P;
 }
 
-void EKFLocalization::print_xP() {
-
-    std::cout << *x << std::endl;
-    std::cout << *P << std::endl;
-}
 
 
 shared_ptr<vector<Vector2d>> EKFLocalization::getLandmarks() {
@@ -99,7 +94,7 @@ unique_ptr<VectorXd> EKFLocalization::residual(const unique_ptr<VectorXd> &a,
     return make_unique<VectorXd>( res );
 }
 
-unique_ptr<MatrixXd> EKFLocalization::HJacobian(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &landmark) {
+unique_ptr<MatrixXd> EKFLocalization::HJacobian(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark) {
 
     float px = landmark->data()[0];
     float py = landmark->data()[1];
@@ -115,7 +110,7 @@ unique_ptr<MatrixXd> EKFLocalization::HJacobian(const unique_ptr<VectorXd> &x, c
 }
 
 
-unique_ptr<VectorXd> EKFLocalization::Hx(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &landmark) {
+unique_ptr<VectorXd> EKFLocalization::Hx(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark) {
 
     float px = landmark->data()[0];
     float py = landmark->data()[1];
@@ -126,7 +121,7 @@ unique_ptr<VectorXd> EKFLocalization::Hx(const unique_ptr<VectorXd> &x, const un
 }
 
 
-unique_ptr<VectorXd> EKFLocalization::move(const unique_ptr<VectorXd> &x, const unique_ptr<VectorXd> &u) {
+shared_ptr<VectorXd> EKFLocalization::move(const shared_ptr<VectorXd> &x, const unique_ptr<VectorXd> &u) {
 
     float r = u->data()[0];
     float angle = u->data()[1];
@@ -142,10 +137,10 @@ unique_ptr<VectorXd> EKFLocalization::move(const unique_ptr<VectorXd> &x, const 
 
         res << x->data()[0] + ( r * cos( angle )  / 10 ) ,
                x->data()[1] + ( r * sin( angle )  / 10 ) ,
-               x->data()[2] + 1e-5;
+               x->data()[2] + 1e-3;
     }
 
-    return make_unique<VectorXd>( res );
+    return make_shared<VectorXd>( res );
 }
 
 void EKFLocalization::predict(const unique_ptr<VectorXd> &u) {
@@ -173,7 +168,7 @@ void EKFLocalization::predict(const unique_ptr<VectorXd> &u) {
     this->P = make_unique<MatrixXd>( F * (*this->P) * F.transpose()  + V * M * V.transpose() );
 }
 
-void EKFLocalization::update(const unique_ptr<VectorXd> &z, const unique_ptr<VectorXd> &landmark) {
+void EKFLocalization::update(const unique_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark) {
 
     unique_ptr<MatrixXd> H = HJacobian(this->x, landmark);
     MatrixXd PHT = (*this->P) * H->transpose();

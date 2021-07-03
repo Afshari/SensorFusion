@@ -20,7 +20,7 @@ int InputParser::getCode(const string& data) {
 }
 
 
-unique_ptr<vector<int>> InputParser::getIndices(const string& data, const string& delimiter) {
+shared_ptr<vector<int>> InputParser::getIndices(const string& data, const string& delimiter) {
 
     vector<int> indices;
 
@@ -34,13 +34,13 @@ unique_ptr<vector<int>> InputParser::getIndices(const string& data, const string
         indices.push_back( pos );
     }
 
-    return make_unique<vector<int>>( indices );
+    return make_shared<vector<int>>( indices );
 }
 
 
-unique_ptr<map<string, float>> InputParser::getParams(const string& data, int start_index, int end_index) {
+shared_ptr<map<string, float>> InputParser::getParams(const string& data, int start_index, int len) {
 
-    string token = data.substr(start_index, end_index);
+    string token = data.substr(start_index, len);
 
     auto indices = getIndices(token, ",");
 
@@ -62,12 +62,12 @@ unique_ptr<map<string, float>> InputParser::getParams(const string& data, int st
         { "prior_cov_angle", prior_cov_angle }
     };
 
-    return make_unique<map<string, float>>( result );
+    return make_shared<map<string, float>>( result );
 }
 
-unique_ptr<VectorXd> InputParser::getControlInput(const string& data, int start_index, int end_index) {
+unique_ptr<VectorXd> InputParser::getControlInput(const string& data, int start_index, int len) {
 
-    string token = data.substr(start_index, end_index);
+    string token = data.substr(start_index, len);
 
     auto indices = getIndices(token, ",");
 
@@ -88,9 +88,9 @@ unique_ptr<VectorXd> InputParser::getControlInput(const string& data, int start_
 }
 
 
-unique_ptr<vector<Vector2d>> InputParser::getObservations(const string& data, int start_index, int end_index) {
+shared_ptr<vector<Vector2d>> InputParser::getObservations(const string& data, int start_index, int len) {
 
-    string token = data.substr(start_index, end_index);
+    string token = data.substr(start_index, len);
     auto indices = getIndices(token, ";");
 
 //    std::cout << token << std::endl;
@@ -114,10 +114,17 @@ unique_ptr<vector<Vector2d>> InputParser::getObservations(const string& data, in
         observations.push_back( Vector2d( x, y ) );
     }
 
-    return make_unique<vector<Vector2d>>( observations );
+    return make_shared<vector<Vector2d>>( observations );
 }
 
 
+
+
+//int SimpleParser::getCode(const string& data) {
+
+//    std::ignore = data;
+//    return 100;
+//}
 
 
 

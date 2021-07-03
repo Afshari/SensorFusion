@@ -9,13 +9,15 @@ void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>
                            const shared_ptr<InputParser>& parser) {
 
     int code = parser->getCode(data);
-    unique_ptr<vector<int>> indices = parser->getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = parser->getIndices( data, ":" );
 
     if(code == 100) {
 
         int start_index = (*indices)[1];
         int len = (*indices)[2] - (*indices)[1] - 1;
-        unique_ptr<map<string, float>> params = parser->getParams(data, start_index, len);
+
+//        std::cout << start_index << " " << len << std::endl;
+        shared_ptr<map<string, float>> params = parser->getParams(data, start_index, len);
 
         ekf->setParams( (*params)["std_vel"],     (*params)["std_steer"],   (*params)["std_range"],
                         (*params)["std_bearing"], (*params)["start_angle"], (*params)["prior_cov_pos"],
@@ -38,18 +40,31 @@ void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>
 
         start_index = (*indices)[2];
         len = (*indices)[3] - (*indices)[2] - 1;
-        unique_ptr<vector<Vector2d>> observations = parser->getObservations(data, start_index, len);
+        shared_ptr<vector<Vector2d>> observations = parser->getObservations(data, start_index, len);
+        shared_ptr<vector<Vector2d>> landmarks = ekf->getLandmarks();
 
-        for(auto i = 0U; i < ekf->getLandmarks()->size(); i++) {
+        for(auto i = 0U; i < observations->size(); i++) {
 
-            ekf->update( make_unique<VectorXd>( observations->at(i) ),
-                         make_unique<VectorXd>( ekf->getLandmarks()->at(i) ) );
+            auto lnd = landmarks->at(i);
+            auto obs = observations->at(i);
+
+            ekf->update( make_unique<VectorXd>( obs ),
+                         make_unique<VectorXd>( lnd ) );
         }
-
     }
 
-
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

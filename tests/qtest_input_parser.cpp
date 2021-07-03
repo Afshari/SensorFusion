@@ -26,7 +26,7 @@ void QTestInputParser::testGetIndices() {
     InputParser inputParser;
 
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
-    unique_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
     vector<int> ref_indices = { 0, 4, 45, 278 };
     QVERIFY( equal(indices->begin(), indices->end(), ref_indices.begin()) );
 
@@ -48,7 +48,7 @@ void QTestInputParser::testGetControlInput() {
     InputParser inputParser;
 
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
-    unique_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
     int start_index = (*indices)[1];
     int len = (*indices)[2] - (*indices)[1] - 1;
     unique_ptr<VectorXd> controlInput = inputParser.getControlInput(data, start_index, len);
@@ -86,13 +86,13 @@ void QTestInputParser::testGetParams() {
     InputParser inputParser;
 
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
-    unique_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
 
     unique_ptr<EKFLocalization> ekf = make_unique<EKFLocalization>( 0.1, 0.5, 0.1, 0.1 );
 
     int start_index = (*indices)[1];
     int len = (*indices)[2] - (*indices)[1] - 1;
-    unique_ptr<map<string, float>> params = inputParser.getParams(data, start_index, len);
+    shared_ptr<map<string, float>> params = inputParser.getParams(data, start_index, len);
 
     ekf->setParams( (*params)["std_vel"], (*params)["std_steer"], (*params)["std_range"],
             (*params)["std_bearing"], (*params)["start_angle"], (*params)["prior_cov_pos"],
@@ -122,14 +122,14 @@ void QTestInputParser::testGetLandmarks() {
     InputParser inputParser;
 
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
-    unique_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
 
     unique_ptr<EKFLocalization> ekf = make_unique<EKFLocalization>( 0.1, 0.5, 0.1, 0.1 );
 
     int start_index = (*indices)[3];
     int len = data.length() - (*indices)[3];
-    unique_ptr<vector<Vector2d>> landmarks = inputParser.getObservations(data, start_index, len);
-    ekf->setLandmarks( std::move( landmarks ) );
+    shared_ptr<vector<Vector2d>> landmarks = inputParser.getObservations(data, start_index, len);
+    ekf->setLandmarks( landmarks );
 
     vector<Vector2d> ref_landmarks;
     ref_landmarks.push_back( Vector2d(  10, 15 ) );
@@ -164,14 +164,14 @@ void QTestInputParser::testGetObservations() {
     InputParser inputParser;
 
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
-    unique_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
 
 //    unique_ptr<EKFLocalization> ekf = make_unique<EKFLocalization>( 0.1, 0.5, 0.1, 0.1 );
 
     int start_index = (*indices)[2];
     int len = (*indices)[3] - (*indices)[2] - 1;
 
-    unique_ptr<vector<Vector2d>> observations = inputParser.getObservations(data, start_index, len);
+    shared_ptr<vector<Vector2d>> observations = inputParser.getObservations(data, start_index, len);
 
     vector<Vector2d> ref_observations;
     ref_observations.push_back( Vector2d( 17.858 , -0.564 ) );

@@ -25,6 +25,7 @@ public:
     void step(const string &data,
               const shared_ptr<EKFLocalization>& ekf, const shared_ptr<InputParser>& parser);
 
+
 #if RUN_TYPE == RUN_TEST
 
     friend class QTestRunLocalization;
