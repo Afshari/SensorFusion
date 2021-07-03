@@ -178,11 +178,4 @@ TEST(RunLocalization, Code101) {
 
 
 
-
-
-
-
-
-
-
 #endif // TST_EKF_TEST_H
