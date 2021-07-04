@@ -5,17 +5,13 @@ EKFLocalization::EKFLocalization(QObject *parent) : QObject(parent) {
 
     this->dim_x = 3;
     this->dim_z = 2;
-//    this->dim_u = 2;
 
-    this->x = make_unique<VectorXd>( VectorXd::Zero(this->dim_x, 1) );                   // State
-    this->P = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );     // Uncertainty Covariance
+    this->x = make_shared<VectorXd>( VectorXd::Zero(this->dim_x, 1) );                   // State
+    this->P = make_shared<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );     // Uncertainty Covariance
     this->F = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );     // State Transition Matrix
     this->R = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_z, this->dim_z) );     // State Uncertainty
     this->Q = make_unique<MatrixXd>( MatrixXd::Identity(this->dim_x, this->dim_x) );     // Process Uncertainty
     this->y = make_unique<VectorXd>( VectorXd::Zero(this->dim_z, 1) );                   // Residual
-
-//    z = np.array([None]*self.dim_z)
-//    self.z = reshape_z(z, self.dim_z, self.x.ndim)
 
     this->K  = make_unique<VectorXd>( VectorXd::Zero(this->dim_x, 1) );                  // Kalman Gain
     this->S  = make_unique<MatrixXd>( MatrixXd::Zero(this->dim_z, this->dim_z) );        // system uncertainty
@@ -68,12 +64,13 @@ void EKFLocalization::setParams(float std_vel, float std_steer, float std_range,
     this->std_vel = std_vel;
     this->std_steer = std_steer * M_PI / 180;
     setR(std_range, std_bearing);
-    this->x = make_unique<VectorXd>( Vector3d( { 0, 0, start_angle } ) );
+    this->x = make_shared<VectorXd>( Vector3d( { 0, 0, start_angle } ) );
+
     MatrixXd P(3, 3);
     P << prior_cov_pos, 0,             0,
          0,             prior_cov_pos, 0,
          0,             0,             prior_cov_angle;
-    this->P = make_unique<MatrixXd>( P );
+    this->P = make_shared<MatrixXd>( P );
 }
 
 
@@ -165,7 +162,7 @@ void EKFLocalization::predict(const unique_ptr<VectorXd> &u) {
     M << this->std_vel * pow(v, 2),   0,
          0,                           pow(this->std_steer, 2);
 
-    this->P = make_unique<MatrixXd>( F * (*this->P) * F.transpose()  + V * M * V.transpose() );
+    this->P = make_shared<MatrixXd>( F * (*this->P) * F.transpose()  + V * M * V.transpose() );
 }
 
 void EKFLocalization::update(const unique_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark) {
@@ -177,10 +174,10 @@ void EKFLocalization::update(const unique_ptr<VectorXd> &z, const shared_ptr<Vec
     MatrixXd K = PHT * SI;
     unique_ptr<VectorXd> hx = Hx(this->x, landmark);
     unique_ptr<VectorXd> y = residual(z, hx);
-    this->x = make_unique<VectorXd>( (*this->x) + K * (*y) );
+    this->x = make_shared<VectorXd>( (*this->x) + K * (*y) );
 
     MatrixXd I_KH = (*_I) - K * (*H);
-    this->P = make_unique<MatrixXd>( I_KH * (*this->P) * I_KH.transpose() + K * (*this->R) * K.transpose() );
+    this->P = make_shared<MatrixXd>( I_KH * (*this->P) * I_KH.transpose() + K * (*this->R) * K.transpose() );
 }
 
 void EKFLocalization::setR(const float std_range, const float std_bearing) {

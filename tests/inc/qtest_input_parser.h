@@ -20,8 +20,9 @@ public:
 private slots:
     void testGetCode();
     void testGetIndices();
-    void testGetControlInput();
-    void testGetParams();
+    void testGetLocalizationControlInput();
+    void testGetLocalizationParams();
+    void testGetTrackingParams();
     void testGetLandmarks();
     void testGetObservations();
 

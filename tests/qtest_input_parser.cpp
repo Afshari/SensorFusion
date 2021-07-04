@@ -1,7 +1,6 @@
 #include "inc/qtest_input_parser.h"
 
-QTestInputParser::QTestInputParser(QObject *parent) : QObject(parent)
-{
+QTestInputParser::QTestInputParser(QObject *parent) : QObject(parent) {
 
 }
 
@@ -43,7 +42,7 @@ void QTestInputParser::testGetIndices() {
     QVERIFY( equal(indices->begin(), indices->end(), ref_indices.begin()) );
 }
 
-void QTestInputParser::testGetControlInput() {
+void QTestInputParser::testGetLocalizationControlInput() {
 
     InputParser inputParser;
 
@@ -51,7 +50,7 @@ void QTestInputParser::testGetControlInput() {
     shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
     int start_index = (*indices)[1];
     int len = (*indices)[2] - (*indices)[1] - 1;
-    unique_ptr<VectorXd> controlInput = inputParser.getControlInput(data, start_index, len);
+    unique_ptr<VectorXd> controlInput = inputParser.getLocalizationControlInput(data, start_index, len);
     float r = (*controlInput)[0];
     float theta = (*controlInput)[1];
     QVERIFY( fabs( r - 3.5292 ) < 1e-4 );
@@ -62,7 +61,7 @@ void QTestInputParser::testGetControlInput() {
     indices = inputParser.getIndices( data, ":" );
     start_index = (*indices)[1];
     len = (*indices)[2] - (*indices)[1] - 1;
-    controlInput = inputParser.getControlInput(data, start_index, len);
+    controlInput = inputParser.getLocalizationControlInput(data, start_index, len);
     r = (*controlInput)[0];
     theta = (*controlInput)[1];
     QVERIFY( fabs( r - 4.3896 ) < 1e-4 );
@@ -73,7 +72,7 @@ void QTestInputParser::testGetControlInput() {
     indices = inputParser.getIndices( data, ":" );
     start_index = (*indices)[1];
     len = (*indices)[2] - (*indices)[1] - 1;
-    controlInput = inputParser.getControlInput(data, start_index, len);
+    controlInput = inputParser.getLocalizationControlInput(data, start_index, len);
     r = (*controlInput)[0];
     theta = (*controlInput)[1];
     QVERIFY( fabs( r - 13.1687 ) < 1e-4 );
@@ -81,7 +80,7 @@ void QTestInputParser::testGetControlInput() {
 }
 
 
-void QTestInputParser::testGetParams() {
+void QTestInputParser::testGetLocalizationParams() {
 
     InputParser inputParser;
 
@@ -92,7 +91,7 @@ void QTestInputParser::testGetParams() {
 
     int start_index = (*indices)[1];
     int len = (*indices)[2] - (*indices)[1] - 1;
-    shared_ptr<map<string, float>> params = inputParser.getParams(data, start_index, len);
+    shared_ptr<map<string, float>> params = inputParser.getLocalizationParams(data, start_index, len);
 
     ekf->setParams( (*params)["std_vel"], (*params)["std_steer"], (*params)["std_range"],
             (*params)["std_bearing"], (*params)["start_angle"], (*params)["prior_cov_pos"],
@@ -115,6 +114,25 @@ void QTestInputParser::testGetParams() {
     QVERIFY( fabs( (*ekf->P)(2, 2) - 0.1 ) < 1e-4 );
 }
 
+
+void QTestInputParser::testGetTrackingParams() {
+
+    InputParser inputParser;
+
+    string data = "100:95,75:0,0,0.1,0.1,0.1,1";
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+
+    int start_index = (*indices)[2];
+    int len         = (*indices)[3] - (*indices)[2] - 1;
+    shared_ptr<map<string, float>> params = inputParser.getTrackingParams(data, start_index, len);
+
+    QVERIFY( fabs( (*params)["init_x"]  - 0   )     < 1e-4 );
+    QVERIFY( fabs( (*params)["init_y"]  - 0   )     < 1e-4 );
+    QVERIFY( fabs( (*params)["std_x"]   - 0.1 )     < 1e-4 );
+    QVERIFY( fabs( (*params)["std_y"]   - 0.1 )     < 1e-4 );
+    QVERIFY( fabs( (*params)["dt"]      - 0.1 )     < 1e-4 );
+    QVERIFY( fabs( (*params)["process_noise"] - 1 ) < 1e-4 );
+}
 
 
 void QTestInputParser::testGetLandmarks() {
@@ -166,8 +184,6 @@ void QTestInputParser::testGetObservations() {
     string data = "100:3.5292, 0.0001,0.1,1,0.3,0.1,1.5,0.1,0.1:17.858,-0.564;18.400,-0.565;18.693,-0.524;19.246,-0.561;18.227,0.705;19.060,0.657;19.922,0.628;20.770,0.614;20.300,0.524;18.239,-3.715;18.832,-3.734;19.450,-3.796;20.093,-3.795;14.659,-2.417;15.402,-2.448;16.201,-2.497;17.012,-2.524:10,15;11,15;10,16;11,16;-10,15;-10,16;-10,17;-10,18;-9,18;-10,-15;-11,-15;-12,-15;-13,-15;10,-11;10,-12;10,-13;10,-14";
     shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
 
-//    unique_ptr<EKFLocalization> ekf = make_unique<EKFLocalization>( 0.1, 0.5, 0.1, 0.1 );
-
     int start_index = (*indices)[2];
     int len = (*indices)[3] - (*indices)[2] - 1;
 
@@ -199,6 +215,5 @@ void QTestInputParser::testGetObservations() {
         QVERIFY( fabs( observations->at(i)(0) - ref_observations.at(i)(0)  ) < 1e-4 &&
                  fabs( observations->at(i)(1) - ref_observations.at(i)(1)  ) < 1e-4 );
     }
-
 }
 

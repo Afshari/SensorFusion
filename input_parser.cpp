@@ -38,34 +38,35 @@ shared_ptr<vector<int>> InputParser::getIndices(const string& data, const string
 }
 
 
-shared_ptr<map<string, float>> InputParser::getParams(const string& data, int start_index, int len) {
+shared_ptr<map<string, float>> InputParser::getLocalizationParams(const string& data, int start_index, int len) {
 
     string token = data.substr(start_index, len);
 
     auto indices = getIndices(token, ",");
 
-    float std_vel = std::stof( token.substr( (*indices)[2], (*indices)[3] - (*indices)[2] - 1 ) );
-    float std_steer = std::stof( token.substr( (*indices)[3], (*indices)[4] - (*indices)[3] - 1 ) );
-    float std_range = std::stof( token.substr( (*indices)[4], (*indices)[5] - (*indices)[4] - 1 ) );
-    float std_bearing = std::stof( token.substr( (*indices)[5], (*indices)[6] - (*indices)[5] - 1 ) );
-    float start_angle = std::stof( token.substr( (*indices)[6], (*indices)[7] - (*indices)[6] - 1 ) );
-    float prior_cov_pos = std::stof( token.substr( (*indices)[7], (*indices)[8] - (*indices)[7] - 1 ) );
-    float prior_cov_angle = std::stof( token.substr( (*indices)[8], (*indices)[9] - (*indices)[8] - 1 ) );
+    float std_vel           = std::stof( token.substr( (*indices)[2], (*indices)[3] - (*indices)[2] - 1 ) );
+    float std_steer         = std::stof( token.substr( (*indices)[3], (*indices)[4] - (*indices)[3] - 1 ) );
+    float std_range         = std::stof( token.substr( (*indices)[4], (*indices)[5] - (*indices)[4] - 1 ) );
+    float std_bearing       = std::stof( token.substr( (*indices)[5], (*indices)[6] - (*indices)[5] - 1 ) );
+    float start_angle       = std::stof( token.substr( (*indices)[6], (*indices)[7] - (*indices)[6] - 1 ) );
+    float prior_cov_pos     = std::stof( token.substr( (*indices)[7], (*indices)[8] - (*indices)[7] - 1 ) );
+    float prior_cov_angle   = std::stof( token.substr( (*indices)[8], (*indices)[9] - (*indices)[8] - 1 ) );
 
     map<string, float> result = {
-        { "std_vel", std_vel },
-        { "std_steer", std_steer },
-        { "std_range", std_range },
-        { "std_bearing", std_bearing },
-        { "start_angle", start_angle },
-        { "prior_cov_pos", prior_cov_pos },
-        { "prior_cov_angle", prior_cov_angle }
+        { "std_vel",            std_vel },
+        { "std_steer",          std_steer },
+        { "std_range",          std_range },
+        { "std_bearing",        std_bearing },
+        { "start_angle",        start_angle },
+        { "prior_cov_pos",      prior_cov_pos },
+        { "prior_cov_angle",    prior_cov_angle }
     };
 
     return make_shared<map<string, float>>( result );
 }
 
-unique_ptr<VectorXd> InputParser::getControlInput(const string& data, int start_index, int len) {
+
+shared_ptr<map<string, float>> InputParser::getTrackingParams(const string& data, int start_index, int len) {
 
     string token = data.substr(start_index, len);
 
@@ -75,16 +76,47 @@ unique_ptr<VectorXd> InputParser::getControlInput(const string& data, int start_
 //    std::copy(indices->begin(), indices->end(), std::ostream_iterator<int>(std::cout, " "));
 //    std::cout << std::endl;
 
+    float init_x        = std::stof( token.substr( (*indices)[0], (*indices)[1]  - (*indices)[0] - 1 ) );
+    float init_y        = std::stof( token.substr( (*indices)[1], (*indices)[2]  - (*indices)[1] - 1 ) );
+    float std_x         = std::stof( token.substr( (*indices)[2], (*indices)[3]  - (*indices)[2] - 1 ) );
+    float std_y         = std::stof( token.substr( (*indices)[3], (*indices)[4]  - (*indices)[3] - 1 ) );
+    float dt            = std::stof( token.substr( (*indices)[4], (*indices)[5]  - (*indices)[4] - 1 ) );
+    float process_noise = std::stof( token.substr( (*indices)[5], token.length() - (*indices)[5] ) );
+
+    map<string, float> result = {
+        { "init_x",         init_x },
+        { "init_y",         init_y },
+        { "std_x",          std_x },
+        { "std_y",          std_y },
+        { "dt",             dt },
+        { "process_noise",  process_noise }
+    };
+
+    return make_shared<map<string, float>>( result );
+}
+
+unique_ptr<VectorXd> InputParser::getLocalizationControlInput(const string& data, int start_index, int len) {
+
+    string token = data.substr(start_index, len);
+
+    auto indices = getIndices(token, ",");
+
     float r = std::stof( token.substr( (*indices)[0], (*indices)[1] - (*indices)[0] - 1 ) );
     float theta = std::stof( token.substr( (*indices)[1], (*indices)[2] - (*indices)[1] - 1 ) );
 
-//    map<string, float> result = {
-//        { "r", r },
-//        { "theta", theta },
-//    };
-
-
     return make_unique<VectorXd>( Vector2d( r, theta ) );
+}
+
+unique_ptr<VectorXd> InputParser::getTrackingInput(const string& data, int start_index, int len) {
+
+    string token = data.substr(start_index, len);
+
+    auto indices = getIndices(token, ",");
+
+    float x = std::stof( token.substr( (*indices)[0], (*indices)[1] - (*indices)[0] - 1 ) );
+    float y = std::stof( token.substr( (*indices)[1], (*indices)[2] - (*indices)[1] - 1 ) );
+
+    return make_unique<VectorXd>( Vector2d( x, y ) );
 }
 
 

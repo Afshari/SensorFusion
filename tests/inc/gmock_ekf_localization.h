@@ -1,5 +1,5 @@
-#ifndef TST_EKF_TEST_H
-#define TST_EKF_TEST_H
+#ifndef GMOCK_EKF_LOCALIZATION_H
+#define GMOCK_EKF_LOCALIZATION_H
 
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
@@ -9,6 +9,7 @@
 #include "inc/run_localization.h"
 #include "inc/ekf_localization.h"
 #include "inc/input_parser.h"
+#include "tests/inc/gmock_input_parser.h"
 
 //using namespace testing;
 
@@ -37,20 +38,6 @@ public:
 };
 
 
-class MockInputParser : public InputParser {
-
-public:
-
-    MOCK_METHOD1( getCode,          int( const string& data ) );
-    MOCK_METHOD2( getIndices,       shared_ptr<vector<int>>( const string& data, const string& delimiter ) );
-    MOCK_METHOD3( getParams,        shared_ptr<map<string, float>>( const string& data, int start_index, int len ) );
-    MOCK_METHOD3( getControlInput,  unique_ptr<VectorXd>( const string& data, int start_index, int end_index ) );
-    MOCK_METHOD3( getObservations,  shared_ptr<vector<Vector2d>>( const string& data, int start_index, int len) );
-
-};
-
-
-
 
 TEST(RunLocalization, Code100) {
 
@@ -77,7 +64,7 @@ TEST(RunLocalization, Code100) {
             .Times(1)
             .WillOnce( Return( indices ) );
 
-    EXPECT_CALL( *parser, getParams( _, _, _ ) )
+    EXPECT_CALL( *parser, getLocalizationParams( _, _, _ ) )
             .Times(1)
             .WillOnce( Return( params ) );
 
@@ -87,7 +74,7 @@ TEST(RunLocalization, Code100) {
     EXPECT_CALL( *ekf, setLandmarks( _ ) )
             .Times(1);
 
-    EXPECT_CALL( *parser, getControlInput( _, _, _ ) )
+    EXPECT_CALL( *parser, getLocalizationControlInput( _, _, _ ) )
             .Times(1)
             .WillOnce( Return( ByMove( nullptr ) ) );
 
@@ -138,7 +125,7 @@ TEST(RunLocalization, Code101) {
             .Times(1)
             .WillOnce( Return( indices ) );
 
-    EXPECT_CALL( *parser, getParams( _, _, _ ) )
+    EXPECT_CALL( *parser, getLocalizationParams( _, _, _ ) )
             .Times(0);
 
     EXPECT_CALL( *ekf, setParams( _, _, _, _, _, _, _ ) )
@@ -147,7 +134,7 @@ TEST(RunLocalization, Code101) {
     EXPECT_CALL( *ekf, setLandmarks( _ ) )
             .Times(0);
 
-    EXPECT_CALL( *parser, getControlInput( _, _, _ ) )
+    EXPECT_CALL( *parser, getLocalizationControlInput( _, _, _ ) )
             .Times(1)
             .WillOnce( Return( ByMove( nullptr ) ) );
 
@@ -178,4 +165,4 @@ TEST(RunLocalization, Code101) {
 
 
 
-#endif // TST_EKF_TEST_H
+#endif // GMOCK_EKF_LOCALIZATION_H

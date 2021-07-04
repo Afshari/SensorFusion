@@ -16,8 +16,7 @@ void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>
         int start_index = (*indices)[1];
         int len = (*indices)[2] - (*indices)[1] - 1;
 
-//        std::cout << start_index << " " << len << std::endl;
-        shared_ptr<map<string, float>> params = parser->getParams(data, start_index, len);
+        shared_ptr<map<string, float>> params = parser->getLocalizationParams(data, start_index, len);
 
         ekf->setParams( (*params)["std_vel"],     (*params)["std_steer"],   (*params)["std_range"],
                         (*params)["std_bearing"], (*params)["start_angle"], (*params)["prior_cov_pos"],
@@ -27,14 +26,13 @@ void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>
         len = data.length() - (*indices)[3];
         shared_ptr<vector<Vector2d>> landmarks = parser->getObservations(data, start_index, len);
         ekf->setLandmarks( landmarks );
-
     }
 
     if(code == 100 || code == 101) {
 
         int start_index = (*indices)[1];
         int len = (*indices)[2] - (*indices)[1] - 1;
-        unique_ptr<VectorXd> u = parser->getControlInput(data, start_index, len);
+        unique_ptr<VectorXd> u = parser->getLocalizationControlInput(data, start_index, len);
 
         ekf->predict( u );
 

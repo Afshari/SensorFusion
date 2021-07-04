@@ -56,20 +56,26 @@ if(TEST_ENABLE)
 
         ekf_localization.cpp
         run_localization.cpp
+        kf_tracking.cpp
         input_parser.cpp
+        run_tracking.cpp
         tcp_server.cpp
 
         inc/ekf_localization.h
         inc/run_localization.h
+        inc/kf_tracking.h
+        inc/run_tracking.h
         inc/input_parser.h
         inc/tcp_server.h
 
         tests/qtest_ekf_localization.cpp
         tests/qtest_run_localization.cpp
+        tests/qtest_kf_tracking.cpp
         tests/qtest_input_parser.cpp
 
         tests/inc/qtest_ekf_localization.h
         tests/inc/qtest_run_localization.h
+        tests/inc/qtest_kf_tracking.h
         tests/inc/qtest_input_parser.h
 
         main.cpp
@@ -83,11 +89,15 @@ else()
 
         ekf_localization.cpp
         run_localization.cpp
+        kf_tracking.cpp
+        run_tracking.cpp
         input_parser.cpp
         tcp_server.cpp
 
         inc/ekf_localization.h
         inc/run_localization.h
+        inc/kf_tracking.h
+        inc/run_tracking.h
         inc/input_parser.h
         inc/tcp_server.h
 

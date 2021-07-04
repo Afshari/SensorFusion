@@ -7,6 +7,7 @@
 #include <map>
 
 #include "inc/ekf_localization.h"
+#include "inc/kf_tracking.h"
 
 using std::string;
 using std::vector;
@@ -21,9 +22,11 @@ public:
 
     virtual int getCode(const string& data);
     virtual shared_ptr<vector<int>> getIndices(const string& data, const string& delimiter);
-    virtual shared_ptr<map<string, float>> getParams(const string& data, int start_index, int len);
+    virtual shared_ptr<map<string, float>> getLocalizationParams(const string& data, int start_index, int len);
+    virtual shared_ptr<map<string, float>> getTrackingParams(const string& data, int start_index, int len);
     virtual shared_ptr<vector<Vector2d>> getObservations(const string& data, int start_index, int len);
-    virtual unique_ptr<VectorXd> getControlInput(const string& ata, int start_index, int len);
+    virtual unique_ptr<VectorXd> getLocalizationControlInput(const string& data, int start_index, int len);
+    virtual unique_ptr<VectorXd> getTrackingInput(const string& data, int start_index, int len);
 
 #if RUN_TYPE == RUN_TEST
 
@@ -33,20 +36,5 @@ public:
 
 };
 
-
-//#if RUN_TYPE == RUN_TEST
-
-//class SimpleParser : public QObject  {
-//    Q_OBJECT
-//public:
-
-//    virtual int getCode(const string& data);
-
-
-//    friend class QTestInputParser;
-
-//};
-
-//#endif
 
 #endif // INPUT_PARSER_H
