@@ -35,9 +35,9 @@ public:
     virtual void setLandmarks(shared_ptr<vector<Vector2d>> landmarks);
     virtual void setR(const float std_range, const float std_bearing);
 
-    shared_ptr<VectorXd> get_x();
-    shared_ptr<MatrixXd> get_P();
-    virtual shared_ptr<vector<Vector2d>> getLandmarks();
+    shared_ptr<VectorXd> get_x() { return this->x; }
+    shared_ptr<MatrixXd> get_P() { return this->P; }
+    virtual shared_ptr<vector<Vector2d>> getLandmarks() { return this->landmarks; }
 
 private:
 

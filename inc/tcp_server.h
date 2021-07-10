@@ -14,6 +14,8 @@
 #include "inc/ekf_localization.h"
 #include "inc/input_parser.h"
 #include "inc/run_localization.h"
+#include "inc/run_tracking.h"
+#include "inc/kf_tracking.h"
 
 using std::unique_ptr;
 using std::make_unique;
@@ -25,8 +27,12 @@ class TCPServer : public QObject {
 public:
     explicit TCPServer(QObject *parent = nullptr);
 
+    static const int APPLICATION_EKF_LOCALIZATION = 1;
+    static const int APPLICATION_KF_TRACKING = 2;
+
+
 public slots:
-    void start();
+    void start(int typeOfApplication);
     void quit();
     void newConnection();
     void disconnected();
@@ -36,10 +42,15 @@ public slots:
 private:
     QTcpServer server;
 
+    int typeOfApplication = 0;
+
     unique_ptr<RunLocalization> run_localization;
     shared_ptr<EKFLocalization> ekf;
-    shared_ptr<InputParser> parser;
 
+    unique_ptr<RunTracking> run_tracking;
+    shared_ptr<KFTracking> kf;
+
+    shared_ptr<InputParser> parser;
 
 };
 

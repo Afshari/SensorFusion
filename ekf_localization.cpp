@@ -39,24 +39,6 @@ EKFLocalization::EKFLocalization(float dt, float wheelbase, float std_vel, float
     this->t = dt;
 }
 
-shared_ptr<VectorXd> EKFLocalization::get_x() {
-
-    return this->x;
-}
-
-
-shared_ptr<MatrixXd> EKFLocalization::get_P() {
-
-    return this->P;
-}
-
-
-
-shared_ptr<vector<Vector2d>> EKFLocalization::getLandmarks() {
-
-    return landmarks;
-}
-
 
 void EKFLocalization::setParams(float std_vel, float std_steer, float std_range,
                float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle) {
