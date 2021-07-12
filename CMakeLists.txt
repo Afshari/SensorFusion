@@ -22,9 +22,9 @@ add_definitions(-DRUN_APP=3)
 #unset(DEBUG_ENABLE CACHE)
 #unset(APP_ENABLE   CACHE)
 
-option(TEST_ENABLE  ""  ON)
+option(TEST_ENABLE  ""  OFF)
 option(DEBUG_ENABLE ""  OFF)
-option(APP_ENABLE   ""  OFF)
+option(APP_ENABLE   ""  ON)
 
 MESSAGE( STATUS "-->> TEST_ENABLE  is " ${TEST_ENABLE}  )
 MESSAGE( STATUS "-->> DEBUG_ENABLE is " ${DEBUG_ENABLE} )
@@ -47,68 +47,67 @@ find_package(Qt5Core)
 find_package(Qt5Network)
 find_package(GTest CONFIG REQUIRED)
 
+set(SOURCES ekf_localization.cpp        ################## SOURCE FILES ##################
+    run_localization.cpp
+    kf_tracking.cpp
+    run_tracking.cpp
+    kf_passive_suspension.cpp
+    run_suspension_estimator.cpp
+    input_parser.cpp
+    tcp_server.cpp
+    inc/ekf_localization.h              ################## HEADER FILES ##################
+    inc/run_localization.h
+    inc/kf_tracking.h
+    inc/run_tracking.h
+    inc/kf_passive_suspension.h
+    inc/run_suspension_estimator.h
+    inc/input_parser.h
+    inc/tcp_server.h
+    main.cpp                            ################## MAIN FILE ##################
+ )
+
 
 if(TEST_ENABLE)
 
     MESSAGE( STATUS "-->> Add Executable for Test" )
 
-    add_executable(SensorFusion
-
-        ekf_localization.cpp
-        run_localization.cpp
-        kf_tracking.cpp
-        input_parser.cpp
-        run_tracking.cpp
-        tcp_server.cpp
-
-        inc/ekf_localization.h
-        inc/run_localization.h
-        inc/kf_tracking.h
-        inc/run_tracking.h
-        inc/input_parser.h
-        inc/tcp_server.h
-
-        tests/qtest_ekf_localization.cpp
-        tests/qtest_run_localization.cpp
-        tests/qtest_kf_tracking.cpp
-        tests/qtest_input_parser.cpp
-
-        tests/inc/qtest_ekf_localization.h
-        tests/inc/qtest_run_localization.h
-        tests/inc/qtest_kf_tracking.h
-        tests/inc/qtest_input_parser.h
-
-        main.cpp
-    )
+    set(SOURCES ${SOURCES}
+            tests/qtest_ekf_localization.cpp
+            tests/qtest_run_localization.cpp
+            tests/qtest_kf_tracking.cpp
+            tests/qtest_kf_passive_suspension.cpp
+            tests/qtest_run_suspension_estimator.cpp
+            tests/qtest_input_parser.cpp
+            tests/inc/qtest_ekf_localization.h
+            tests/inc/qtest_run_localization.h
+            tests/inc/qtest_kf_tracking.h
+            tests/inc/qtest_kf_passive_suspension.h
+            tests/inc/qtest_run_suspension_estimator.h
+            tests/inc/qtest_input_parser.h
+        )
 
 else()
 
     MESSAGE( STATUS "-->> Add Executable for Running App" )
 
-    add_executable(SensorFusion
-
-        ekf_localization.cpp
-        run_localization.cpp
-        kf_tracking.cpp
-        run_tracking.cpp
-        input_parser.cpp
-        tcp_server.cpp
-
-        inc/ekf_localization.h
-        inc/run_localization.h
-        inc/kf_tracking.h
-        inc/run_tracking.h
-        inc/input_parser.h
-        inc/tcp_server.h
-
-        main.cpp
-    )
-
 endif()
 
+MESSAGE( STATUS "-->> Source Files for Compilation: " ${SOURCES} )
+
+
+add_executable(SensorFusion
+    ${SOURCES} )
+
+
+if(TEST_ENABLE)
 
 target_link_libraries(SensorFusion Qt5::Core Qt5::Network Eigen3::Eigen Qt5::Test GTest::gtest GTest::gmock)
 
+else()
+
+target_link_libraries(SensorFusion Qt5::Core Qt5::Network Eigen3::Eigen)
+
+endif()
 
 
 

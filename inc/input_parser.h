@@ -25,6 +25,7 @@ public:
     virtual shared_ptr<map<string, float>> getLocalizationParams(const string& data, int start_index, int len);
     virtual shared_ptr<map<string, float>> getTrackingParams(const string& data, int start_index, int len);
     virtual shared_ptr<vector<Vector2d>> getObservations(const string& data, int start_index, int len);
+    virtual shared_ptr<vector<VectorXd>> getSuspensionObservations(const string& data, int start_index, int len);
     virtual unique_ptr<VectorXd> getLocalizationControlInput(const string& data, int start_index, int len);
     virtual unique_ptr<VectorXd> getTrackingInput(const string& data, int start_index, int len);
 

@@ -25,6 +25,7 @@ private slots:
     void testGetTrackingParams();
     void testGetLandmarks();
     void testGetObservations();
+    void testGetSuspensionObservations();
 
 
 };

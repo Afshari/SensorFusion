@@ -11,6 +11,8 @@
 #include "tests/inc/qtest_run_localization.h"
 #include "tests/inc/qtest_input_parser.h"
 #include "tests/inc/qtest_kf_tracking.h"
+#include "tests/inc/qtest_kf_passive_suspension.h"
+#include "tests/inc/qtest_run_suspension_estimator.h"
 
 int main(int argc, char *argv[]) {
 
@@ -26,6 +28,13 @@ int main(int argc, char *argv[]) {
 
     QTestKFTracking q_kf_tracking;
     QTest::qExec(&q_kf_tracking);
+
+    QTestKFPassiveSuspension q_kf_passive_suspension;
+    QTest::qExec(&q_kf_passive_suspension);
+
+    QTestRunSuspensionEstimator q_run_suspension_estimator;
+    QTest::qExec(&q_run_suspension_estimator);
+
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

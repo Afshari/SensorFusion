@@ -217,3 +217,45 @@ void QTestInputParser::testGetObservations() {
     }
 }
 
+
+
+void QTestInputParser::testGetSuspensionObservations() {
+
+    string data = "101:20,30,40,55,65,35";
+
+    InputParser inputParser;
+
+    shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
+
+    int start_index = (*indices)[1];
+    int len = (*indices)[2] - (*indices)[1] - 1;
+
+    shared_ptr<vector<VectorXd>> observations = inputParser.getSuspensionObservations(data, start_index, len);
+
+    vector<VectorXd> ref_observations;
+
+    ref_observations.push_back( Eigen::Vector<double, 1>( 20 ) );
+    ref_observations.push_back( Eigen::Vector<double, 1>( 30 ) );
+    ref_observations.push_back( Eigen::Vector<double, 1>( 40 ) );
+    ref_observations.push_back( Eigen::Vector<double, 1>( 55 ) );
+    ref_observations.push_back( Eigen::Vector<double, 1>( 65 ) );
+    ref_observations.push_back( Eigen::Vector<double, 1>( 35 ) );
+
+
+    QVERIFY(observations->size() == ref_observations.size());
+
+    for(auto i = 0U; i < ref_observations.size(); i++) {
+        QVERIFY( fabs( observations->at(i)(0) - ref_observations.at(i)(0)  ) < 1e-4 );
+    }
+
+}
+
+
+
+
+
+
+
+
+
+

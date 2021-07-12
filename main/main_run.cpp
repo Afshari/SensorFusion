@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     qDebug() << "Select Type of Application";
     qDebug() << "1. Extended Kalman Filter Localization";
     qDebug() << "2. Kalman Filter Tracking";
+    qDebug() << "3. Kalman Filter Passive Suspension Estimator";
 
     std::cin >> typeOfApplication;
 
@@ -23,6 +24,8 @@ int main(int argc, char *argv[]) {
         qDebug() << "You are running Extended Kalman Filter Localization Application";
     } else if(typeOfApplication == TCPServer::APPLICATION_KF_TRACKING) {
         qDebug() << "You are running Kalman Filter Tracking Application";
+    } else if(typeOfApplication == TCPServer::APPLICATION_KF_PASSIVE_SUSPENSION) {
+        qDebug() << "You are running Kalman Filter Passive Suspension Estimator";
     } else {
         qDebug() << "You Chose a Wrong Option";
         exit(-1);

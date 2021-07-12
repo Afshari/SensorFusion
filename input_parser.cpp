@@ -150,13 +150,29 @@ shared_ptr<vector<Vector2d>> InputParser::getObservations(const string& data, in
 }
 
 
+shared_ptr<vector<VectorXd>> InputParser::getSuspensionObservations(const string& data, int start_index, int len) {
+
+    string token = data.substr(start_index, len);
+    auto indices = getIndices(token, ",");
 
 
-//int SimpleParser::getCode(const string& data) {
+    vector<VectorXd> observations;
 
-//    std::ignore = data;
-//    return 100;
-//}
+    string currObservation = "";
+    for(auto i = 0U; i < indices->size(); i++) {
+
+        if(i < indices->size() - 1) {
+            currObservation = token.substr( indices->at(i), indices->at(i + 1) - indices->at(i) - 1 );
+        } else {
+            currObservation = token.substr( indices->at(i), token.length() );
+        }
+        float z = std::stof( currObservation.substr( 0, currObservation.length() ) );
+        observations.push_back( Eigen::Vector<double, 1>( z ) );
+    }
+
+    return make_shared<vector<VectorXd>>( observations );
+}
+
 
 
 

@@ -4,10 +4,15 @@ TCPServer::TCPServer(QObject *parent) : QObject(parent) {
 
     connect(&server, &QTcpServer::newConnection, this, &TCPServer::newConnection);
 
-    run_localization = make_unique<RunLocalization>();
-    run_tracking = make_unique<RunTracking>();
     ekf = make_shared<EKFLocalization>( 0.1, 0.5, 0.1, 0.1 );
+    run_localization = make_unique<RunLocalization>();
+
     kf  = make_shared<KFTracking>( );
+    run_tracking = make_unique<RunTracking>();
+
+    suspension_estimator = make_shared<KFPassiveSuspension>();
+    run_suspension_estimator = make_unique<RunSuspensionEstimator>();
+
     parser = make_shared<InputParser>();
 
 }
@@ -59,8 +64,13 @@ void TCPServer::readyRead() {
         stringStream << (*ekf->get_x())(0) << "," << (*ekf->get_x())(1) << "," << (*ekf->get_x())(2) ;
         std::string response = stringStream.str();
         socket->write( response.c_str(), response.length() );
+
     } else if(this->typeOfApplication == APPLICATION_KF_TRACKING) {
 
+    } else if(this->typeOfApplication == APPLICATION_KF_PASSIVE_SUSPENSION) {
+
+        std::string response = run_suspension_estimator->step(data, suspension_estimator, parser);
+        socket->write( response.c_str(), response.length() );
     }
 
 }
