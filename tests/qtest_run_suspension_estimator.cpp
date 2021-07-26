@@ -15,7 +15,6 @@ void QTestRunSuspensionEstimator::testRunStep_1() {
     shared_ptr<InputParser> parser = make_shared<InputParser>();
 
     std::string response = run_suspension_estimator.step(data, suspension_estimator, parser);
-
 }
 
 

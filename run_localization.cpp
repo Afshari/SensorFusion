@@ -36,8 +36,14 @@ void RunLocalization::step(const string &data, const shared_ptr<EKFLocalization>
 
         ekf->predict( u );
 
-        start_index = (*indices)[2];
-        len = (*indices)[3] - (*indices)[2] - 1;
+        if(code == 100) {
+            start_index = (*indices)[2];
+            len = (*indices)[3] - (*indices)[2] - 1;
+        } else if(code == 101) {
+            start_index = (*indices)[1];
+            len = data.length() - (*indices)[1];
+        }
+
         shared_ptr<vector<Vector2d>> observations = parser->getObservations(data, start_index, len);
         shared_ptr<vector<Vector2d>> landmarks = ekf->getLandmarks();
 

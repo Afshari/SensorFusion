@@ -22,9 +22,9 @@ add_definitions(-DRUN_APP=3)
 #unset(DEBUG_ENABLE CACHE)
 #unset(APP_ENABLE   CACHE)
 
-option(TEST_ENABLE  ""  OFF)
+option(TEST_ENABLE  ""  ON)
 option(DEBUG_ENABLE ""  OFF)
-option(APP_ENABLE   ""  ON)
+option(APP_ENABLE   ""  OFF)
 
 MESSAGE( STATUS "-->> TEST_ENABLE  is " ${TEST_ENABLE}  )
 MESSAGE( STATUS "-->> DEBUG_ENABLE is " ${DEBUG_ENABLE} )
@@ -45,7 +45,7 @@ find_package(Qt5Test REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(Qt5Core)
 find_package(Qt5Network)
-find_package(GTest CONFIG REQUIRED)
+
 
 set(SOURCES ekf_localization.cpp        ################## SOURCE FILES ##################
     run_localization.cpp
@@ -70,6 +70,7 @@ set(SOURCES ekf_localization.cpp        ################## SOURCE FILES ########
 if(TEST_ENABLE)
 
     MESSAGE( STATUS "-->> Add Executable for Test" )
+    find_package(GTest CONFIG REQUIRED)
 
     set(SOURCES ${SOURCES}
             tests/qtest_ekf_localization.cpp
@@ -86,28 +87,22 @@ if(TEST_ENABLE)
             tests/inc/qtest_input_parser.h
         )
 
+    add_executable(TestSensorFusion
+        ${SOURCES} )
+
+    target_link_libraries(TestSensorFusion Qt5::Core Qt5::Network Eigen3::Eigen Qt5::Test GTest::gtest GTest::gmock)
+
 else()
 
     MESSAGE( STATUS "-->> Add Executable for Running App" )
+    add_executable(SensorFusion
+        ${SOURCES} )
+    target_link_libraries(SensorFusion Qt5::Core Qt5::Network Eigen3::Eigen)
 
 endif()
 
 MESSAGE( STATUS "-->> Source Files for Compilation: " ${SOURCES} )
 
-
-add_executable(SensorFusion
-    ${SOURCES} )
-
-
-if(TEST_ENABLE)
-
-target_link_libraries(SensorFusion Qt5::Core Qt5::Network Eigen3::Eigen Qt5::Test GTest::gtest GTest::gmock)
-
-else()
-
-target_link_libraries(SensorFusion Qt5::Core Qt5::Network Eigen3::Eigen)
-
-endif()
 
 
 

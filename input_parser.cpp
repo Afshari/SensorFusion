@@ -167,7 +167,7 @@ shared_ptr<vector<VectorXd>> InputParser::getSuspensionObservations(const string
             currObservation = token.substr( indices->at(i), token.length() );
         }
         float z = std::stof( currObservation.substr( 0, currObservation.length() ) );
-        observations.push_back( Eigen::Vector<double, 1>( z ) );
+        observations.push_back( Vector1d<double, 1>( z ) );
     }
 
     return make_shared<vector<VectorXd>>( observations );

@@ -8,6 +8,7 @@ std::string RunSuspensionEstimator::step(const string &data,
                                   const shared_ptr<KFPassiveSuspension>& estimator, const shared_ptr<InputParser>& parser) {
 
 
+//    std::cout << data << std::endl;
     int code = parser->getCode(data);
     shared_ptr<vector<int>> indices = parser->getIndices( data, ":" );
 
@@ -17,7 +18,8 @@ std::string RunSuspensionEstimator::step(const string &data,
     if(code == 100 || code == 101) {
 
         int start_index = (*indices)[1];
-        int len = (*indices)[2] - (*indices)[1] - 1;
+        int len = data.length() - (*indices)[1];
+//        std::cout << "len " << len << std::endl;
         shared_ptr<vector<VectorXd>> observations = parser->getSuspensionObservations(data, start_index, len);
 
         for(auto z : *observations) {

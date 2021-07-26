@@ -15,6 +15,9 @@ using std::unique_ptr;
 using std::make_unique;
 using std::map;
 
+template<typename Type, int Size>
+using Vector1d = Matrix<Type, Size, 1>;
+
 class InputParser : public QObject {
     Q_OBJECT
 public:

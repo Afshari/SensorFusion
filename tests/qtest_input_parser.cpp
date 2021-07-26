@@ -123,7 +123,7 @@ void QTestInputParser::testGetTrackingParams() {
     shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
 
     int start_index = (*indices)[2];
-    int len         = (*indices)[3] - (*indices)[2] - 1;
+    int len         = data.length() - (*indices)[2];
     shared_ptr<map<string, float>> params = inputParser.getTrackingParams(data, start_index, len);
 
     QVERIFY( fabs( (*params)["init_x"]  - 0   )     < 1e-4 );
@@ -234,12 +234,12 @@ void QTestInputParser::testGetSuspensionObservations() {
 
     vector<VectorXd> ref_observations;
 
-    ref_observations.push_back( Eigen::Vector<double, 1>( 20 ) );
-    ref_observations.push_back( Eigen::Vector<double, 1>( 30 ) );
-    ref_observations.push_back( Eigen::Vector<double, 1>( 40 ) );
-    ref_observations.push_back( Eigen::Vector<double, 1>( 55 ) );
-    ref_observations.push_back( Eigen::Vector<double, 1>( 65 ) );
-    ref_observations.push_back( Eigen::Vector<double, 1>( 35 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 20 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 30 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 40 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 55 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 65 ) );
+    ref_observations.push_back( Vector1d<double, 1>( 35 ) );
 
 
     QVERIFY(observations->size() == ref_observations.size());
