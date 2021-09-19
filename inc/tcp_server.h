@@ -1,5 +1,5 @@
-#ifndef TCPSERVER_H
-#define TCPSERVER_H
+#ifndef _TCP_SERVER_H
+#define _TCP_SERVER_H
 
 #include <QObject>
 #include <QDebug>
@@ -12,6 +12,7 @@
 #include <Eigen/Dense>
 
 #include "inc/ekf_localization.h"
+#include "inc/pf_localization.h"
 #include "inc/input_parser.h"
 #include "inc/run_localization.h"
 #include "inc/kf_tracking.h"
@@ -32,6 +33,7 @@ public:
     static const int APPLICATION_EKF_LOCALIZATION = 1;
     static const int APPLICATION_KF_TRACKING = 2;
     static const int APPLICATION_KF_PASSIVE_SUSPENSION = 3;
+    static const int APPLICATION_PF_LOCALIZATION = 4;
 
 
 public slots:
@@ -49,6 +51,7 @@ private:
 
     unique_ptr<RunLocalization> run_localization;
     shared_ptr<EKFLocalization> ekf;
+    shared_ptr<PFLocalization>  pf;
 
     unique_ptr<RunTracking> run_tracking;
     shared_ptr<KFTracking> kf;
@@ -61,4 +64,4 @@ private:
 
 };
 
-#endif // TCPSERVER_H
+#endif // _TCP_SERVER_H

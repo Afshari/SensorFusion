@@ -4,7 +4,7 @@
 #include <QTest>
 
 #include "tests/inc/gmock_input_parser.h"
-#include "tests/inc/gmock_ekf_localization.h"
+//#include "tests/inc/gmock_ekf_localization.h"
 #include "tests/inc/gmock_kf_tracking.h"
 
 #include "tests/inc/qtest_ekf_localization.h"
@@ -13,6 +13,9 @@
 #include "tests/inc/qtest_kf_tracking.h"
 #include "tests/inc/qtest_kf_passive_suspension.h"
 #include "tests/inc/qtest_run_suspension_estimator.h"
+#include "tests/inc/qtest_pf_object.h"
+#include "tests/inc/qtest_pf_particle.h"
+#include "tests/inc/qtest_pf_robot.h"
 
 int main(int argc, char *argv[]) {
 
@@ -35,6 +38,14 @@ int main(int argc, char *argv[]) {
     QTestRunSuspensionEstimator q_run_suspension_estimator;
     QTest::qExec(&q_run_suspension_estimator);
 
+    QTestPFObject q_pf_object;
+    QTest::qExec(&q_pf_object);
+
+    QTestPFRobot q_pf_robot;
+    QTest::qExec(&q_pf_robot);
+
+    QTestPFParticle q_pf_particle;
+    QTest::qExec(&q_pf_particle);
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

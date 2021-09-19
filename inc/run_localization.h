@@ -7,6 +7,7 @@
 #include <map>
 
 #include "inc/ekf_localization.h"
+#include "inc/pf_localization.h"
 #include "inc/input_parser.h"
 
 using std::string;
@@ -23,7 +24,12 @@ public:
     explicit RunLocalization(QObject *parent = nullptr);
 
     void step(const string &data,
-              const shared_ptr<EKFLocalization>& ekf, const shared_ptr<InputParser>& parser);
+              const shared_ptr<EKFLocalization>& ekf,
+              const shared_ptr<InputParser>& parser);
+
+    void step(const string &data,
+              const shared_ptr<PFLocalization>&  pf,
+              const shared_ptr<InputParser>& parser);
 
 
 #if RUN_TYPE == RUN_TEST

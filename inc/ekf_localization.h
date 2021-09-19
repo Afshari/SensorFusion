@@ -28,8 +28,8 @@ public:
     virtual ~EKFLocalization() { };
 
 
-    virtual void predict(const unique_ptr<VectorXd> &u);
-    virtual void update(const unique_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark);
+    virtual void predict(const shared_ptr<VectorXd> &u);
+    virtual void update(const shared_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark);
     virtual void setParams( float std_vel, float std_steer, float std_range,
                             float std_bearing, float start_angle, float prior_cov_pos, float prior_cov_angle);
     virtual void setLandmarks(shared_ptr<vector<Vector2d>> landmarks);
@@ -67,10 +67,10 @@ private:
     int dim_z;
 
 private:
-    unique_ptr<VectorXd> residual(const unique_ptr<VectorXd> &a, const unique_ptr<VectorXd> &b);
+    unique_ptr<VectorXd> residual(const shared_ptr<VectorXd> &a, const shared_ptr<VectorXd> &b);
     unique_ptr<MatrixXd> HJacobian(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark);
     unique_ptr<VectorXd> Hx(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &landmark);
-    shared_ptr<VectorXd> move(const shared_ptr<VectorXd> &x, const unique_ptr<VectorXd> &u);
+    shared_ptr<VectorXd> move(const shared_ptr<VectorXd> &x, const shared_ptr<VectorXd> &u);
 
 
 #if RUN_TYPE == RUN_TEST

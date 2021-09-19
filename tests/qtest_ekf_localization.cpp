@@ -49,22 +49,22 @@ void QTestEKFLocalization::testResidual() {
 
     EKFLocalization ekf(1.0, 0.5, 0.1, 0.1);
 
-    unique_ptr<VectorXd> ref = make_unique<VectorXd>( Vector2d( { 0.03394354, -0.0464792 } ) );
-    unique_ptr<VectorXd> a   = make_unique<VectorXd>( Vector2d( { 43.818,        0.238 } ) );
-    unique_ptr<VectorXd> b   = make_unique<VectorXd>( Vector2d( { 43.78405646,   31.70040573 } ) );
-    unique_ptr<VectorXd> res = ekf.residual(a, b);
+    shared_ptr<VectorXd> ref = make_shared<VectorXd>( Vector2d( { 0.03394354, -0.0464792 } ) );
+    shared_ptr<VectorXd> a   = make_shared<VectorXd>( Vector2d( { 43.818,        0.238 } ) );
+    shared_ptr<VectorXd> b   = make_shared<VectorXd>( Vector2d( { 43.78405646,   31.70040573 } ) );
+    shared_ptr<VectorXd> res = ekf.residual(a, b);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
-    ref = make_unique<VectorXd>( Vector2d( { -0.26831728,   -0.03546623 } ) );
-    a   = make_unique<VectorXd>( Vector2d( { 35.133,        0.732 } ) );
-    b   = make_unique<VectorXd>( Vector2d( { 35.40131728,   32.18339277 } ) );
+    ref = make_shared<VectorXd>( Vector2d( { -0.26831728,   -0.03546623 } ) );
+    a   = make_shared<VectorXd>( Vector2d( { 35.133,        0.732 } ) );
+    b   = make_shared<VectorXd>( Vector2d( { 35.40131728,   32.18339277 } ) );
     res = ekf.residual(a, b);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
-    ref = make_unique<VectorXd>( Vector2d( { -0.26221709,   -0.03021161 } ) );
-    a   = make_unique<VectorXd>( Vector2d( { 38.208,        0.724 } ) );
-    b   = make_unique<VectorXd>( Vector2d( { 38.47021709,   32.17013814 } ) );
+    ref = make_shared<VectorXd>( Vector2d( { -0.26221709,   -0.03021161 } ) );
+    a   = make_shared<VectorXd>( Vector2d( { 38.208,        0.724 } ) );
+    b   = make_shared<VectorXd>( Vector2d( { 38.47021709,   32.17013814 } ) );
     res = ekf.residual(a, b);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
@@ -76,7 +76,7 @@ void QTestEKFLocalization::testHJacobian() {
 
     MatrixXd m(2, 3);
     m << -0.56192236, -0.82718998,  0., 0.01889249, -0.01283395, -1.;
-    unique_ptr<MatrixXd> ref = make_unique<MatrixXd>( m );
+    shared_ptr<MatrixXd> ref = make_shared<MatrixXd>( m );
     shared_ptr<VectorXd> x   = make_shared<VectorXd>( Vector3d( { -13.6032405, -20.21773263, -30.72631734 } ) );
     shared_ptr<VectorXd> landmark = make_shared<VectorXd>( Vector2d( { 11, 16 } ) );
     shared_ptr<MatrixXd> res = ekf.HJacobian(x, landmark);
@@ -84,16 +84,16 @@ void QTestEKFLocalization::testHJacobian() {
 
 
     m << -0.10193153, -0.99479142,  0., 0.02810041, -0.00287931, -1.;
-    ref = make_unique<MatrixXd>( m );
-    x   = make_unique<VectorXd>( Vector3d( { -13.60851057, -20.21692656, -30.71470532 } ) );
+    ref = make_shared<MatrixXd>( m );
+    x   = make_shared<VectorXd>( Vector3d( { -13.60851057, -20.21692656, -30.71470532 } ) );
     landmark = make_shared<VectorXd>( Vector2d( { -10,  15 } ) );
     res = ekf.HJacobian(x, landmark);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
     m << -0.45036721, -0.89284342,  0., 0.15369142, -0.07752488, -1.;
-    ref = make_unique<MatrixXd>( m );
-    x   = make_unique<VectorXd>( Vector3d( { -13.61632959, -20.18681779, -30.71201017 } ) );
+    ref = make_shared<MatrixXd>( m );
+    x   = make_shared<VectorXd>( Vector3d( { -13.61632959, -20.18681779, -30.71201017 } ) );
     landmark = make_shared<VectorXd>( Vector2d( { -11, -15 } ) );
     res = ekf.HJacobian(x, landmark);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
@@ -106,22 +106,22 @@ void QTestEKFLocalization::testHx() {
 
     EKFLocalization ekf(1.0, 0.5, 0.1, 0.1);
 
-    unique_ptr<VectorXd> ref = make_unique<VectorXd>( Vector2d( { 43.78405646, 31.70040573 } ) );
+    shared_ptr<VectorXd> ref = make_shared<VectorXd>( Vector2d( { 43.78405646, 31.70040573 } ) );
     shared_ptr<VectorXd> x   = make_shared<VectorXd>( Vector3d( { -13.6032405, -20.21773263, -30.72631734 } ) );
     shared_ptr<VectorXd> landmark = make_shared<VectorXd>( Vector2d( { 11, 16 } ) );
-    unique_ptr<VectorXd> res = ekf.Hx(x, landmark);
+    shared_ptr<VectorXd> res = ekf.Hx(x, landmark);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
-    ref = make_unique<VectorXd>( Vector2d( { 36.38969007, 32.17870607 } ) );
-    x   = make_unique<VectorXd>( Vector3d( { -13.61276245, -20.20990874, -30.7073534 } ) );
+    ref = make_shared<VectorXd>( Vector2d( { 36.38969007, 32.17870607 } ) );
+    x   = make_shared<VectorXd>( Vector3d( { -13.61276245, -20.20990874, -30.7073534 } ) );
     landmark = make_shared<VectorXd>( Vector2d( { -10,  16 } ) );
     res = ekf.Hx(x, landmark);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
-    ref = make_unique<VectorXd>( Vector2d( { 5.43190142, 31.96838902 } ) );
-    x   = make_unique<VectorXd>( Vector3d( { -13.62398805, -20.18345598, -30.7012082 } ) );
+    ref = make_shared<VectorXd>( Vector2d( { 5.43190142, 31.96838902 } ) );
+    x   = make_shared<VectorXd>( Vector3d( { -13.62398805, -20.18345598, -30.7012082 } ) );
     landmark = make_shared<VectorXd>( Vector2d( { -12, -15 } ) );
     res = ekf.Hx(x, landmark);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
@@ -132,23 +132,23 @@ void QTestEKFLocalization::testMove() {
 
     EKFLocalization ekf(1.0, 0.5, 0.1, 0.1);
 
-    unique_ptr<VectorXd> ref = make_unique<VectorXd>( Vector3d( { -20.18120416, -12.07864027, 29.84808727 } ) );
+    shared_ptr<VectorXd> ref = make_shared<VectorXd>( Vector3d( { -20.18120416, -12.07864027, 29.84808727 } ) );
     shared_ptr<VectorXd> x   = make_shared<VectorXd>( Vector3d( { -20.33603814, -9.67268248,  31.35461782 } ) );
-    unique_ptr<VectorXd> u = make_unique<VectorXd>( Vector2d( { 24.10934771, -1.50653054 } ) );
+    shared_ptr<VectorXd> u = make_shared<VectorXd>( Vector2d( { 24.10934771, -1.50653054 } ) );
     shared_ptr<VectorXd> res = ekf.move(x, u);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
-    ref = make_unique<VectorXd>( Vector3d( { -13.93197419, -20.13896966, 32.5359183 } ) );
-    x   = make_unique<VectorXd>( Vector3d( { -16.37744233, -20.30090509, 32.46979625 } ) );
-    u   = make_unique<VectorXd>( Vector2d( { 24.50823842,  0.06612205 } ) );
+    ref = make_shared<VectorXd>( Vector3d( { -13.93197419, -20.13896966, 32.5359183 } ) );
+    x   = make_shared<VectorXd>( Vector3d( { -16.37744233, -20.30090509, 32.46979625 } ) );
+    u   = make_shared<VectorXd>( Vector2d( { 24.50823842,  0.06612205 } ) );
     res = ekf.move(x, u);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 
 
-    ref = make_unique<VectorXd>( Vector3d( { -5.52721469, -19.36541078, 32.81518997 } ) );
-    x   = make_unique<VectorXd>( Vector3d( { -8.02600925, -19.38111513, 32.80890529 } ) );
-    u   = make_unique<VectorXd>( Vector2d( { 2.49884390e+01, 6.28468591e-03 } ) );
+    ref = make_shared<VectorXd>( Vector3d( { -5.52721469, -19.36541078, 32.81518997 } ) );
+    x   = make_shared<VectorXd>( Vector3d( { -8.02600925, -19.38111513, 32.80890529 } ) );
+    u   = make_shared<VectorXd>( Vector2d( { 2.49884390e+01, 6.28468591e-03 } ) );
     res = ekf.move(x, u);
     QVERIFY2(ref->isApprox(*res, 1e-4), "  ");
 }
@@ -163,7 +163,7 @@ void QTestEKFLocalization::testPredict() {
     /*********************/
 
     shared_ptr<VectorXd> prior_x = make_shared<VectorXd>( Vector3d( { -18.13236483, 13.19801501, 37.93045011 } ) );
-    unique_ptr<VectorXd> u = make_unique<VectorXd>( Vector2d( { 19.39568599,  0.80476266 } ) );
+    shared_ptr<VectorXd> u = make_shared<VectorXd>( Vector2d( { 19.39568599,  0.80476266 } ) );
     MatrixXd prior_P(3, 3);
     prior_P <<  6.39011755e-04, -8.38867162e-05, -3.79601249e-05,
                 -8.38867163e-05,  8.11039663e-04,  2.02738186e-05,
@@ -244,7 +244,7 @@ void QTestEKFLocalization::testUpdate() {
     /*********************/
 
     shared_ptr<VectorXd> prior_x = make_shared<VectorXd>( Vector3d( { 11.99960625,  16.91019943, -11.00267899 } ) );
-    unique_ptr<VectorXd> z = make_unique<VectorXd>( Vector2d( { 1.333, -4.007 } ) );
+    shared_ptr<VectorXd> z = make_shared<VectorXd>( Vector2d( { 1.333, -4.007 } ) );
     shared_ptr<VectorXd> landmark = make_shared<VectorXd>( Vector2d( { 11, 16 } ) );
     MatrixXd prior_P(3, 3);
     prior_P <<  0.02877158,  0.00497821, -0.00231896,

@@ -28,7 +28,7 @@ public:
     MOCK_METHOD1( getCode,                          int( const string& data ) );
     MOCK_METHOD2( getIndices,                       shared_ptr<vector<int>>( const string& data, const string& delimiter ) );
     MOCK_METHOD3( getLocalizationParams,            shared_ptr<map<string, float>>( const string& data, int start_index, int len ) );
-    MOCK_METHOD3( getLocalizationControlInput,      unique_ptr<VectorXd>( const string& data, int start_index, int end_index ) );
+    MOCK_METHOD3( getLocalizationControlInput,      shared_ptr<VectorXd>( const string& data, int start_index, int end_index ) );
     MOCK_METHOD3( getObservations,                  shared_ptr<vector<Vector2d>>( const string& data, int start_index, int len) );
 
     MOCK_METHOD3( getTrackingParams,                shared_ptr<map<string, float>> (const string& data, int start_index, int len) );

@@ -161,8 +161,4 @@ TEST(RunLocalization, Code101) {
 
 
 
-
-
-
-
 #endif // GMOCK_EKF_LOCALIZATION_H

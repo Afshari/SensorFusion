@@ -4,6 +4,19 @@ QTestInputParser::QTestInputParser(QObject *parent) : QObject(parent) {
 
 }
 
+void QTestInputParser::testCheckInput() {
+
+    InputParser input_parser;
+
+    string data = "11:100:10,10,0";
+    string resultString;
+    bool   resultBool;
+    tie(resultBool, resultString) = input_parser.checkInput(data);
+
+    QVERIFY(resultBool == true);
+    QVERIFY(resultString == "100:10,10,0");
+}
+
 void QTestInputParser::testGetCode() {
 
     InputParser inputParser;
@@ -50,7 +63,7 @@ void QTestInputParser::testGetLocalizationControlInput() {
     shared_ptr<vector<int>> indices = inputParser.getIndices( data, ":" );
     int start_index = (*indices)[1];
     int len = (*indices)[2] - (*indices)[1] - 1;
-    unique_ptr<VectorXd> controlInput = inputParser.getLocalizationControlInput(data, start_index, len);
+    shared_ptr<VectorXd> controlInput = inputParser.getLocalizationControlInput(data, start_index, len);
     float r = (*controlInput)[0];
     float theta = (*controlInput)[1];
     QVERIFY( fabs( r - 3.5292 ) < 1e-4 );

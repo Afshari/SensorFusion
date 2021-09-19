@@ -1,5 +1,5 @@
-#ifndef QTEST_INPUT_PARSER_H
-#define QTEST_INPUT_PARSER_H
+#ifndef _QTEST_INPUT_PARSER_H
+#define _QTEST_INPUT_PARSER_H
 
 #include <QObject>
 #include <QtTest/QtTest>
@@ -18,6 +18,7 @@ public:
     explicit QTestInputParser(QObject *parent = nullptr);
 
 private slots:
+    void testCheckInput();
     void testGetCode();
     void testGetIndices();
     void testGetLocalizationControlInput();
@@ -30,4 +31,4 @@ private slots:
 
 };
 
-#endif // QTEST_INPUT_PARSER_H
+#endif // _QTEST_INPUT_PARSER_H
