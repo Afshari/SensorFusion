@@ -18,28 +18,13 @@ add_definitions(-DRUN_TEST=1)
 add_definitions(-DRUN_DEBUG=2)
 add_definitions(-DRUN_APP=3)
 
-#unset(TEST_ENABLE  CACHE)
-#unset(DEBUG_ENABLE CACHE)
-#unset(APP_ENABLE   CACHE)
+set( SET_RUN_TEST   "1")
+set( SET_RUN_DEBUG  "2")
+set( SET_RUN_APP    "3")
 
-option(TEST_ENABLE  ""  OFF)
-option(DEBUG_ENABLE ""  OFF)
-option(APP_ENABLE   ""  ON)
+##### Here you can define the Running Mode of the Application #####
+set( SET_RUN_TYPE ${SET_RUN_APP} )
 
-MESSAGE( STATUS "-->> TEST_ENABLE  is " ${TEST_ENABLE}  )
-MESSAGE( STATUS "-->> DEBUG_ENABLE is " ${DEBUG_ENABLE} )
-MESSAGE( STATUS "-->> APP_ENABLE   is " ${APP_ENABLE}   )
-
-if(APP_ENABLE)
-    add_definitions(-DRUN_TYPE=RUN_APP)
-    MESSAGE( STATUS "-->> Configure Running App" )
-elseif(TEST_ENABLE)
-    add_definitions(-DRUN_TYPE=RUN_TEST)
-    MESSAGE( STATUS "-->> Configure Running Test" )
-elseif(DEBUG_ENABLE)
-    add_definitions(-DRUN_TYPE=RUN_DEBUG)
-    MESSAGE( STATUS "-->> Configure Running Debug" )
-endif()
 
 find_package(Qt5Test REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -74,16 +59,16 @@ set(SOURCES src/ekf_localization.cpp        ################## SOURCE FILES ####
 
 include_directories(inc/stats)
 
-if(TEST_ENABLE)
+if( ${SET_RUN_TYPE} MATCHES ${SET_RUN_TEST} )
 
     MESSAGE( STATUS "-->> Add Executable for Test" )
+    add_definitions(-DRUN_TYPE=RUN_TEST)
     find_package(GTest CONFIG REQUIRED)
 
     set(SOURCES ${SOURCES}
             tests/qtest_ekf_localization.cpp
             tests/qtest_pf_object.cpp
             tests/qtest_pf_particle.cpp
-            tests/qtest_pf_robot.cpp
             tests/qtest_run_localization.cpp
             tests/qtest_kf_tracking.cpp
             tests/qtest_kf_passive_suspension.cpp
@@ -92,7 +77,6 @@ if(TEST_ENABLE)
             tests/inc/qtest_ekf_localization.h
             tests/inc/qtest_pf_object.h
             tests/inc/qtest_pf_particle.h
-            tests/inc/qtest_pf_robot.h
             tests/inc/qtest_run_localization.h
             tests/inc/qtest_kf_tracking.h
             tests/inc/qtest_kf_passive_suspension.h
@@ -105,9 +89,10 @@ if(TEST_ENABLE)
 
     target_link_libraries(TestSensorFusion Qt5::Core Qt5::Network Eigen3::Eigen Qt5::Test GTest::gtest GTest::gmock)
 
-elseif(DEBUG_ENABLE)
+elseif( ${SET_RUN_TYPE} MATCHES ${SET_RUN_DEBUG} )
 
     MESSAGE( STATUS "-->> Add Executable for Debug" )
+    add_definitions(-DRUN_TYPE=RUN_DEBUG)
     set(SOURCES ${SOURCES}
         src/debug_server.cpp
         inc/debug_server.h
@@ -118,9 +103,10 @@ elseif(DEBUG_ENABLE)
 
     target_link_libraries(DebugSensorFusion Qt5::Core Qt5::Network Eigen3::Eigen)
 
-else()
+elseif( ${SET_RUN_TYPE} MATCHES ${SET_RUN_APP} )
 
     MESSAGE( STATUS "-->> Add Executable for Running App" )
+    add_definitions(-DRUN_TYPE=RUN_APP)
     add_executable(SensorFusion
         src/tcp_server.cpp
         inc/tcp_server.h
@@ -129,7 +115,7 @@ else()
 
 endif()
 
-MESSAGE( STATUS "-->> Source Files for Compilation: " ${SOURCES} )
+#MESSAGE( STATUS "-->> Source Files for Compilation: " ${SOURCES} )
 
 
 

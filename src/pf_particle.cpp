@@ -5,8 +5,8 @@ PFParticle::PFParticle(float x, float y, float theta, QObject *parent) : PFObjec
     this->weight = 0;
     this->distance_sigma = 5;
     this->angle_sigma = 0.5;
-    this->velocity_sigma = 0.3;
-    this->angular_velocity_sigma = 0.02;
+    this->velocity_sigma = 1; // 0.3;
+    this->angular_velocity_sigma = 0.5; // 0.02;
     this->distance_domain = 0.0797884;
     this->angle_domain = 0.7978845;
 }

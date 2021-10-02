@@ -1,5 +1,5 @@
-#ifndef GMOCK_INPUT_PARSER_H
-#define GMOCK_INPUT_PARSER_H
+#ifndef _GMOCK_INPUT_PARSER_H
+#define _GMOCK_INPUT_PARSER_H
 
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
@@ -26,9 +26,12 @@ class MockInputParser : public InputParser {
 public:
 
     MOCK_METHOD1( getCode,                          int( const string& data ) );
+    MOCK_METHOD1( checkInput,                       tuple<bool, string>(const string &data) );
     MOCK_METHOD2( getIndices,                       shared_ptr<vector<int>>( const string& data, const string& delimiter ) );
     MOCK_METHOD3( getLocalizationParams,            shared_ptr<map<string, float>>( const string& data, int start_index, int len ) );
+    MOCK_METHOD3( getPFLocalizationParams,          shared_ptr<Vector3d>( const string& data, int start_index, int len ) );
     MOCK_METHOD3( getLocalizationControlInput,      shared_ptr<VectorXd>( const string& data, int start_index, int end_index ) );
+    MOCK_METHOD3( getLocalizationMeasurements,      shared_ptr<vector<Vector2d>> (const string& data, int start_index, int len) );
     MOCK_METHOD3( getObservations,                  shared_ptr<vector<Vector2d>>( const string& data, int start_index, int len) );
 
     MOCK_METHOD3( getTrackingParams,                shared_ptr<map<string, float>> (const string& data, int start_index, int len) );
@@ -38,4 +41,4 @@ public:
 
 
 
-#endif // GMOCK_INPUT_PARSER_H
+#endif // _GMOCK_INPUT_PARSER_H

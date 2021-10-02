@@ -12,8 +12,8 @@ void QTestPFParticle::testConstructor() {
     QVERIFY2( abs( particle1.y - 20 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle1.theta - 2 ) < 1e-4 , "  ");
 
-    QVERIFY2( abs( particle1.velocity_sigma - 0.5 ) < 1e-4 , "  ");
-    QVERIFY2( abs( particle1.angular_velocity_sigma - 0.2 ) < 1e-4 , "  ");
+    QVERIFY2( abs( particle1.velocity_sigma - 1 ) < 1e-4 , "  ");
+    QVERIFY2( abs( particle1.angular_velocity_sigma - 0.5 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle1.distance_domain - 0.0797884 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle1.angle_domain - 0.7978845 ) < 1e-4 , "  ");
 
@@ -23,8 +23,8 @@ void QTestPFParticle::testConstructor() {
     QVERIFY2( abs( particle2.y - 0 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle2.theta - 0 ) < 1e-4 , "  ");
 
-    QVERIFY2( abs( particle2.velocity_sigma - 0.5 ) < 1e-4 , "  ");
-    QVERIFY2( abs( particle2.angular_velocity_sigma - 0.2 ) < 1e-4 , "  ");
+    QVERIFY2( abs( particle2.velocity_sigma - 1 ) < 1e-4 , "  ");
+    QVERIFY2( abs( particle2.angular_velocity_sigma - 0.5 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle2.distance_domain - 0.0797884 ) < 1e-4 , "  ");
     QVERIFY2( abs( particle2.angle_domain - 0.7978845 ) < 1e-4 , "  ");
 }

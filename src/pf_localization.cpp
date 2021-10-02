@@ -76,12 +76,9 @@ void PFLocalization::resample() {
     }
 
     float coeff = std::clamp<float>(particles.size() / (weights_sum * 10), 0, 10);
-    std::cout << "scale " << coeff << std::endl;
-//    if(scale > 10)
-//        scale = 10;
 
     std::default_random_engine generator;
-    std::discrete_distribution<float> distribution(weights.begin(), weights.end());
+    std::discrete_distribution<int> distribution(weights.begin(), weights.end());
     std::normal_distribution<float> rnd_velocity(0, particles.at(0).getVelocitySigma() * coeff);
     std::normal_distribution<float> rnd_angle(0, particles.at(0).getAngularVelocitySigma() * coeff / 2);
 

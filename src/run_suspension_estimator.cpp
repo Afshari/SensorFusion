@@ -5,7 +5,8 @@ RunSuspensionEstimator::RunSuspensionEstimator(QObject *parent) : QObject(parent
 }
 
 std::string RunSuspensionEstimator::step(const string &data,
-                                  const shared_ptr<KFPassiveSuspension>& estimator, const shared_ptr<InputParser>& parser) {
+                                         const shared_ptr<KFPassiveSuspension>& estimator,
+                                         const shared_ptr<InputParser>& parser) {
 
 //    std::cout << data << std::endl;
     int code = parser->getCode(data);

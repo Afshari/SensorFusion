@@ -1,5 +1,5 @@
-#ifndef GMOCK_EKF_LOCALIZATION_H
-#define GMOCK_EKF_LOCALIZATION_H
+#ifndef _GMOCK_EKF_LOCALIZATION_H
+#define _GMOCK_EKF_LOCALIZATION_H
 
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
@@ -11,7 +11,6 @@
 #include "inc/input_parser.h"
 #include "tests/inc/gmock_input_parser.h"
 
-//using namespace testing;
 
 using std::unique_ptr;
 using ::testing::_;
@@ -30,8 +29,8 @@ public:
                                    float start_angle, float prior_cov_pos, float prior_cov_angle ) );
 
     MOCK_METHOD1( setLandmarks,     void( shared_ptr<vector<Vector2d>> landmarks ) );
-    MOCK_METHOD1( predict,          void( const unique_ptr<VectorXd> &u ) );
-    MOCK_METHOD2( update,           void( const unique_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark ) );
+    MOCK_METHOD1( predict,          void( const shared_ptr<VectorXd> &u ) );
+    MOCK_METHOD2( update,           void( const shared_ptr<VectorXd> &z, const shared_ptr<VectorXd> &landmark ) );
     MOCK_METHOD2( setR,             void( const float std_range, const float std_bearing ) );
     MOCK_METHOD0( getLandmarks,     shared_ptr<vector<Vector2d>>( ) );
 
@@ -159,6 +158,4 @@ TEST(RunLocalization, Code101) {
 }
 
 
-
-
-#endif // GMOCK_EKF_LOCALIZATION_H
+#endif // _GMOCK_EKF_LOCALIZATION_H
